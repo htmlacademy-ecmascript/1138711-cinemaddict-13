@@ -1,7 +1,7 @@
 # Проект «Киноман» [![Build status][travis-image]][travis-url]
 
-* Студент: [Евгений Шестаков](https://up.htmlacademy.ru/ecmascript/13/user/1138711).
-* Наставник: `Неизвестно`.
+* Студент: [Шестаков Евгений](https://up.htmlacademy.ru/ecmascript/13/user/1138711).
+* Наставник: [Балесный Алексей](https://htmlacademy.ru/profile/id221665).
 
 ---
 

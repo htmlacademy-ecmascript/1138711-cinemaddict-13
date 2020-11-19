@@ -1,0 +1,54 @@
+import {createProfileContent} from "./view/profile.js";
+import {createMenuContent} from "./view/menu.js";
+import {createSortContent} from "./view/sort.js";
+import {createFilmsContent} from "./view/films.js";
+import {createFilmCard} from "./view/film-card.js";
+import {createShowMoreBtn} from "./view/show-more-btn.js";
+import {createFilmListRated} from "./view/film-list-rated.js";
+import {createFilmListCommented} from "./view/film-list-commented.js";
+import {createFooterStatistics} from "./view/footer-statistics.js";
+// import {createFilmDetails} from "./view/film-details.js"; Попап
+
+const CARD_COUNT = 5;
+const CARD_COUNT_EXTRA = 5;
+
+const render = (container, content, position) => {
+  container.insertAdjacentHTML(position, content);
+};
+
+const siteHeader = document.querySelector(`.header`);
+const siteMainElement = document.querySelector(`.main`);
+
+render(siteHeader, createProfileContent(), `beforeend`);
+render(siteMainElement, createMenuContent(), `beforeend`);
+render(siteMainElement, createSortContent(), `beforeend`);
+render(siteMainElement, createFilmsContent(), `beforeend`);
+
+const filmListContainer = siteMainElement.querySelector(`.films-list__container`);
+for (let i = 0; i < CARD_COUNT; i++) {
+  render(filmListContainer, createFilmCard(), `beforeend`);
+}
+
+render(filmListContainer, createShowMoreBtn(), `afterend`);
+
+const filmList = siteMainElement.querySelector(`.films-list`);
+render(filmList, createFilmListRated(), `afterend`);
+
+const filmListExtra = siteMainElement.getElementsByClassName(`films-list--extra`);
+const filmListExtraTopContainer = filmListExtra[0].querySelector(`.films-list__container`);
+for (let i = 0; i < CARD_COUNT_EXTRA; i++) {
+  render(filmListExtraTopContainer, createFilmCard(), `beforeend`);
+}
+
+render(filmListExtra[0], createFilmListCommented(), `afterend`);
+
+const filmListExtraCommentContainer = filmListExtra[1].querySelector(`.films-list__container`);
+for (let i = 0; i < CARD_COUNT_EXTRA; i++) {
+  render(filmListExtraCommentContainer, createFilmCard(), `beforeend`);
+}
+
+const siteFooter = document.querySelector(`.footer`);
+const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
+render(footerStatistics, createFooterStatistics(), `beforeend`);
+
+// render(siteFooter, createFilmDetails(), `afterend`);

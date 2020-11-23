@@ -10,7 +10,7 @@ import {createFooterStatistics} from "./view/footer-statistics.js";
 // import {createFilmDetails} from "./view/film-details.js"; Попап
 
 const CARD_COUNT = 5;
-const CARD_COUNT_EXTRA = 5;
+const CARD_COUNT_EXTRA = 2;
 
 const render = (container, content, position) => {
   container.insertAdjacentHTML(position, content);
@@ -34,18 +34,20 @@ render(filmListContainer, createShowMoreBtn(), `afterend`);
 const filmList = siteMainElement.querySelector(`.films-list`);
 render(filmList, createFilmListRated(), `afterend`);
 
+const renderCardExtra = (cardCount, cardContainer) => {
+  for (let i = 0; i < cardCount; i++) {
+    render(cardContainer, createFilmCard(), `beforeend`);
+  }
+};
+
 const filmListExtra = siteMainElement.getElementsByClassName(`films-list--extra`);
 const filmListExtraTopContainer = filmListExtra[0].querySelector(`.films-list__container`);
-for (let i = 0; i < CARD_COUNT_EXTRA; i++) {
-  render(filmListExtraTopContainer, createFilmCard(), `beforeend`);
-}
+renderCardExtra(CARD_COUNT_EXTRA, filmListExtraTopContainer);
 
 render(filmListExtra[0], createFilmListCommented(), `afterend`);
 
 const filmListExtraCommentContainer = filmListExtra[1].querySelector(`.films-list__container`);
-for (let i = 0; i < CARD_COUNT_EXTRA; i++) {
-  render(filmListExtraCommentContainer, createFilmCard(), `beforeend`);
-}
+renderCardExtra(CARD_COUNT_EXTRA, filmListExtraCommentContainer);
 
 const siteFooter = document.querySelector(`.footer`);
 const footerStatistics = siteFooter.querySelector(`.footer__statistics`);

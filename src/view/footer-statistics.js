@@ -1,5 +1,8 @@
-export const createFooterStatistics = () => {
+export const createFooterStatistics = (cardData) => {
+
+  const {date} = cardData;
+
   return ` <section class="footer__statistics">
-        <p>130 291 movies inside</p>
+        <p>${date} movies inside</p>
     </section>`;
 };

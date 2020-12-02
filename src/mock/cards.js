@@ -6,16 +6,14 @@ const MIN_DISCRIPTION = 1;
 const MAX_DISCRIPTION = 5;
 const MIN_DATE = 1960;
 const MAX_DATE = 2020;
-const COMMENT_COUNT = 5;
+const COMMENT_COUNT = 15;
 const REALIZE_YEAR = 80;
 const REALIZE_MONTH = 12;
 const REALIZE_DAY = 30;
 const MIN_DURATION = 30;
 const MAX_DURATION = 180;
-const NUMBER = 5;
 const GENRE_COUNT = 3;
-const MIN_FILMS = 10000;
-const MAX_FILMS = 1000000;
+const MAX_DAYS_GAP = 360;
 const titles = [
   `Made for each other`,
   `Popeye meets Sinbad`,
@@ -89,6 +87,10 @@ const actors = [
   `Dan Duryea`,
   `Young Yougn`
 ];
+const IMAGES = [`made-for-each-other.png`, `popeye-meets-sinbad.png`,
+  `sagebrush-trail.jpg`, `santa-claus-conquers-the-martians.jpg`,
+  `the-dance-of-life.jpg`, `the-great-flamarion.jpg`, `the-man-with-the-golden-arm.jpg`
+];
 
 const getRandomInteger = (min = 0, max = 1) => {
   const lower = Math.ceil(Math.min(min, max));
@@ -102,17 +104,14 @@ const getRandomElement = function (elements) {
 };
 
 const generatePoster = () => {
-  const images = [`made-for-each-other.png`, `popeye-meets-sinbad.png`,
-    `sagebrush-trail.jpg`, `santa-claus-conquers-the-martians.jpg`,
-    `the-dance-of-life.jpg`, `the-great-flamarion.jpg`, `the-man-with-the-golden-arm.jpg`];
-  const poster = `./images/posters/` + getRandomElement(images);
+  const poster = `./images/posters/` + getRandomElement(IMAGES);
   return poster;
 };
 
 const generateDescription = () => {
-  const randomIndex = getRandomInteger(0, descriptions.length - 1);
   const descriptionFilms = [];
   for (let i = 0; i <= descriptions.length; i++) {
+    const randomIndex = getRandomInteger(0, descriptions.length - 1);
     descriptionFilms.push(descriptions[randomIndex]);
   }
   descriptionFilms.sort(() => Math.random() - 0.5);
@@ -121,7 +120,7 @@ const generateDescription = () => {
 
 const getRandomRating = function (min, max) {
   const rand = min + Math.random() * (max + 1 - min);
-  return parseFloat(rand.toFixed(1));
+  return rand.toFixed(1);
 };
 
 const getTimeFromMins = (mins) => {
@@ -131,6 +130,7 @@ const getTimeFromMins = (mins) => {
 };
 
 const generateDuration = () => {
+  // eslint-disable-next-line no-undef
   const duration = require(`dayjs/plugin/duration`);
   dayjs.extend(duration);
   const durationGap = getRandomInteger(MIN_DURATION, MAX_DURATION);
@@ -139,8 +139,7 @@ const generateDuration = () => {
 };
 
 const generateDateComment = () => {
-  const maxDaysGap = 360;
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
+  const daysGap = getRandomInteger(-MAX_DAYS_GAP, MAX_DAYS_GAP);
   return dayjs().add(daysGap, `day`).toDate();
 };
 
@@ -150,7 +149,6 @@ const generateRealize = () => {
 
 const generateComment = () => {
   return {
-    count: getRandomInteger(0, COMMENT_COUNT),
     text: generateDescription(),
     emotion: getRandomElement(emotions),
     date: generateDateComment(),
@@ -159,8 +157,9 @@ const generateComment = () => {
 };
 
 const getCommentBlocks = function () {
+  const randomCommentCount = getRandomInteger(1, COMMENT_COUNT);
   const blocks = [];
-  for (let i = 0; i < NUMBER; i++) {
+  for (let i = 0; i < randomCommentCount; i++) {
     blocks.push(generateComment(i + 1));
   }
   return blocks;
@@ -168,7 +167,7 @@ const getCommentBlocks = function () {
 
 const generateGenres = () => {
   const genres = [];
-  for (let i = 0; i <= genreLists.length; i++) {
+  for (let i = 0; i <= genreLists.length - 1; i++) {
     genres.push(genreLists[i]);
   }
   genres.sort(() => Math.random() - 0.5);
@@ -180,7 +179,6 @@ export const generateCard = () => {
   const duration = generateDuration();
 
   return {
-    films: getRandomInteger(MIN_FILMS, MAX_FILMS),
     poster: generatePoster(),
     title: getRandomElement(titles),
     original: getRandomElement(titles),

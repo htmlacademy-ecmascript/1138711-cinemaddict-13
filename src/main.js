@@ -14,6 +14,7 @@ import {generateFilter} from "./mock/filtration.js";
 const CARD_COUNT = 20;
 const CARD_COUNT_PER_STEP = 5;
 const CARD_COUNT_EXTRA = 2;
+const RENDER_POSITION = `beforeend`;
 
 const cards = new Array(CARD_COUNT).fill().map(generateCard);
 const filters = generateFilter(cards);
@@ -25,14 +26,14 @@ const render = (container, content, position) => {
 const siteHeader = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 
-render(siteHeader, createProfileContent(), `beforeend`);
-render(siteMainElement, createFiltersContent(filters), `beforeend`);
-render(siteMainElement, createSortContent(), `beforeend`);
-render(siteMainElement, createFilmsContent(), `beforeend`);
+render(siteHeader, createProfileContent(), RENDER_POSITION);
+render(siteMainElement, createFiltersContent(filters), RENDER_POSITION);
+render(siteMainElement, createSortContent(), RENDER_POSITION);
+render(siteMainElement, createFilmsContent(), RENDER_POSITION);
 
 const filmListContainer = siteMainElement.querySelector(`.films-list__container`);
 for (let i = 0; i < CARD_COUNT_PER_STEP; i++) {
-  render(filmListContainer, createFilmCard(cards[i]), `beforeend`);
+  render(filmListContainer, createFilmCard(cards[i]), RENDER_POSITION);
 }
 
 const filmList = siteMainElement.querySelector(`.films-list`);
@@ -40,7 +41,7 @@ render(filmList, createFilmListRated(), `afterend`);
 
 const renderCardExtra = (cardCount, cardContainer) => {
   for (let i = 0; i < cardCount; i++) {
-    render(cardContainer, createFilmCard(cards[i]), `beforeend`);
+    render(cardContainer, createFilmCard(cards[i]), RENDER_POSITION);
   }
 };
 
@@ -55,7 +56,7 @@ renderCardExtra(CARD_COUNT_EXTRA, filmListExtraCommentContainer);
 
 const siteFooter = document.querySelector(`.footer`);
 const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
-render(footerStatistics, createFooterStatistics(cards[0]), `beforeend`);
+render(footerStatistics, createFooterStatistics(cards[0]), RENDER_POSITION);
 
 if (cards.length > CARD_COUNT_PER_STEP) {
   let renderedCardCount = CARD_COUNT_PER_STEP;
@@ -68,7 +69,7 @@ if (cards.length > CARD_COUNT_PER_STEP) {
     evt.preventDefault();
     cards
       .slice(renderedCardCount, renderedCardCount + CARD_COUNT_PER_STEP)
-      .forEach((card) => render(filmListContainer, createFilmCard(card), `beforeend`));
+      .forEach((card) => render(filmListContainer, createFilmCard(card), RENDER_POSITION));
 
     renderedCardCount += CARD_COUNT_PER_STEP;
 

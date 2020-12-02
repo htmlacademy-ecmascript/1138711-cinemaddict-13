@@ -1,6 +1,6 @@
-export const createFilmDetails = (card) => {
+export const createFilmDetails = (cards) => {
   const {actors, ageRating, comments, country, description, director, duration, genres, original, poster, rating, realize,
-    writers, title} = card;
+    writers, title} = cards;
 
   const createGenresTemplate = () => {
     return genres.map((genre) => ` <span class="film-details__genre">${genre}</span>`).join(``);

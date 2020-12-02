@@ -1,7 +1,8 @@
-export const createFooterStatistics = (card) => {
-  const {films} = card;
+export const createFooterStatistics = (cardData) => {
+
+  const {date} = cardData;
 
   return ` <section class="footer__statistics">
-        <p>${films} movies inside</p>
+        <p>${date} movies inside</p>
     </section>`;
 };

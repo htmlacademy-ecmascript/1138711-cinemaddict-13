@@ -24,7 +24,7 @@ export const createFilmCard = (card) => {
   </p>
   <img src="${poster}" alt="" class="film-card__poster">
   <p class="film-card__description">${description}</p>
-  <a class="film-card__comments">${comments[0].count}</a>
+  <a class="film-card__comments">${comments.length}</a>
   <div class="film-card__controls">
     <button type="button" class="film-card__controls-item button ${addToWatListClassName}">Add to watchlist</button>
     <button type="button" class="film-card__controls-item button ${watchedClassName}" >Mark as watched</button>

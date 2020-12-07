@@ -16,7 +16,11 @@ import {renderElement, RenderPosition} from "./utils.js";
 const CARD_COUNT = 20;
 const CARD_COUNT_PER_STEP = 5;
 const CARD_COUNT_EXTRA = 2;
-const BODY = document.querySelector(`body`);
+
+const body = document.querySelector(`body`);
+const siteHeader = document.querySelector(`.header`);
+const siteMainElement = document.querySelector(`.main`);
+const siteFooter = document.querySelector(`.footer`);
 
 const cards = new Array(CARD_COUNT).fill().map(generateCard);
 const filters = generateFilter(cards);
@@ -26,10 +30,7 @@ const renderCard = (cardListElement, card) => {
   renderElement(cardListElement, cardComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
-const siteHeader = document.querySelector(`.header`);
 renderElement(siteHeader, new ProfileContent().getElement(), RenderPosition.BEFOREEND);
-
-const siteMainElement = document.querySelector(`.main`);
 renderElement(siteMainElement, new FiltersContent(filters).getElement(), RenderPosition.BEFOREEND);
 renderElement(siteMainElement, new SortContent().getElement(), RenderPosition.BEFOREEND);
 renderElement(siteMainElement, new FilmsContent().getElement(), RenderPosition.BEFOREEND);
@@ -63,7 +64,6 @@ renderElement(films, new FilmListCommented().getElement(), RenderPosition.BEFORE
 const filmListExtraCommentContainer = filmListExtra[1].querySelector(`.films-list__container`);
 renderCardExtra(CARD_COUNT_EXTRA, filmListExtraCommentContainer);
 
-const siteFooter = document.querySelector(`.footer`);
 const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
 renderElement(footerStatistics, new FooterStatistics(cards[0]).getElement(), RenderPosition.AFTERBEGIN);
 
@@ -89,13 +89,14 @@ if (cards.length > CARD_COUNT_PER_STEP) {
 }
 
 const renderFilmDetails = () => {
-  renderElement(siteFooter, new FilmDetails(cards[0]).getElement(), RenderPosition.BEFOREEND);
-  BODY.classList.add(`hide-overflow`);
+  const popUp = new FilmDetails(cards[0]);
+  renderElement(siteFooter, popUp.getElement(), RenderPosition.BEFOREEND);
+  body.classList.add(`hide-overflow`);
 
-  const popUpFilmDetails = document.querySelector(`.film-details`);
   const closeFilmDetails = () => {
-    popUpFilmDetails.remove();
-    BODY.classList.remove(`hide-overflow`);
+    popUp.getElement().remove();
+    body.classList.remove(`hide-overflow`);
+    document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
   const buttonCloseFilmDetails = document.querySelector(`.film-details__close-btn`);

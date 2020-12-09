@@ -1,7 +1,7 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-const createFilmCard = (card) => {
-  const {title, rating, poster, genres, duration, description, date, comments, isFavorite, isWatched, isAddToWatList} = card;
+const createFilmCardTemplate = (card) => {
+  const {id, title, rating, poster, genres, duration, description, date, comments, isFavorite, isWatched, isAddToWatList} = card;
 
   const addToWatListClassName = isAddToWatList
     ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`
@@ -17,16 +17,16 @@ const createFilmCard = (card) => {
 
 
   return `<article class="film-card">
-  <h3 class="film-card__title">${title}</h3>
+  <h3 class="film-card__title" id="${id}">${title}</h3>
   <p class="film-card__rating">${rating}</p>
   <p class="film-card__info">
     <span class="film-card__year">${date}</span>
     <span class="film-card__duration">${duration}</span>
     <span class="film-card__genre">${genres}</span>
   </p>
-  <img src="${poster}" alt="" class="film-card__poster">
+  <img src="${poster}" alt="" class="film-card__poster" id="${id}">
   <p class="film-card__description">${description}</p>
-  <a class="film-card__comments">${comments.length}</a>
+  <a class="film-card__comments" id="${id}">${comments.length}</a>
   <div class="film-card__controls">
     <button type="button" class="film-card__controls-item button ${addToWatListClassName}">Add to watchlist</button>
     <button type="button" class="film-card__controls-item button ${watchedClassName}" >Mark as watched</button>
@@ -35,25 +35,13 @@ const createFilmCard = (card) => {
 </article>`;
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractView {
   constructor(card) {
+    super();
     this._card = card;
-    this._element = null;
   }
 
   getTemplate() {
-    return createFilmCard(this._card);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createFilmCardTemplate(this._card);
   }
 }

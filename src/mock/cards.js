@@ -14,6 +14,7 @@ const MIN_DURATION = 30;
 const MAX_DURATION = 180;
 const GENRE_COUNT = 3;
 const MAX_DAYS_GAP = 360;
+const ID = `id`;
 const titles = [
   `Made for each other`,
   `Popeye meets Sinbad`,
@@ -179,6 +180,7 @@ export const generateCard = () => {
   const duration = generateDuration();
 
   return {
+    id: ID + Math.random().toString(16).slice(2),
     poster: generatePoster(),
     title: getRandomElement(titles),
     original: getRandomElement(titles),

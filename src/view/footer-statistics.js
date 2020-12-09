@@ -1,30 +1,17 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-const createFooterStatistics = (cards) => {
+const createFooterStatisticsTemplate = (cards) => {
   const {date} = cards;
-
   return `<p>${date} movies inside</p>`;
 };
 
-export default class FooterStatistics {
+export default class FooterStatistics extends AbstractView {
   constructor(cards) {
+    super();
     this._cards = cards;
-    this._element = null;
   }
 
   getTemplate() {
-    return createFooterStatistics(this._cards);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createFooterStatisticsTemplate(this._cards);
   }
 }

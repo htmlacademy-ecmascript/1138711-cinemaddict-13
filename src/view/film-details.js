@@ -1,6 +1,6 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-const createFilmDetails = (cards) => {
+const createFilmDetailsTemplate = (cards) => {
   const {actors, ageRating, comments, country, description, director, duration, genres, original, poster, rating, realize,
     writers, title} = cards;
 
@@ -132,25 +132,13 @@ const createFilmDetails = (cards) => {
 </section>`;
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractView {
   constructor(cards) {
+    super();
     this._cards = cards;
-    this._element = null;
   }
 
   getTemplate() {
-    return createFilmDetails(this._cards);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createFilmDetailsTemplate(this._cards);
   }
 }

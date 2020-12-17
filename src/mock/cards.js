@@ -175,12 +175,14 @@ const generateGenres = () => {
   return genres.slice(0, getRandomInteger(1, GENRE_COUNT));
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 export const generateCard = () => {
   const comments = getCommentBlocks();
   const duration = generateDuration();
 
   return {
-    id: ID + Math.random().toString(16).slice(2),
+    id: ID + generateId(),
     poster: generatePoster(),
     title: getRandomElement(titles),
     original: getRandomElement(titles),

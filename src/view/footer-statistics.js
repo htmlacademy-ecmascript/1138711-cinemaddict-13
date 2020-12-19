@@ -12,6 +12,6 @@ export default class FooterStatistics extends AbstractView {
   }
 
   getTemplate() {
-    return createFooterStatisticsTemplate(this._cards);
+    return createFooterStatisticsTemplate(this._cards[0]);
   }
 }

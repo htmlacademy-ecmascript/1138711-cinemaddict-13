@@ -1,9 +1,16 @@
 import AbstractView from "./view/abstract.js";
+import dayjs from "dayjs";
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
   AFTEREND: `afterend`
+};
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`
 };
 
 export const render = (container, child, place) => {
@@ -36,7 +43,7 @@ export const replace = (newChild, oldChild) => {
 
   const parent = oldChild.parentElement;
 
-  if (parent === null || oldChild === null || newChild === null) {
+  if (parent === null || newChild === null) {
     throw new Error(`Can't replace unexisting elements`);
   }
 
@@ -88,3 +95,34 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1)
   ];
 };
+
+const getWeightForNullDate = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+export const sortCardUp = (cardA, cardB) => {
+  return dayjs(cardA.date).diff(dayjs(cardB.date));
+};
+
+export const sortCardRating = (cardA, cardB) => {
+  const weight = getWeightForNullDate(cardA.rating, cardB.rating);
+
+  if (weight !== null) {
+    return weight;
+  }
+
+  return dayjs(cardA.rating).diff(dayjs(cardB.rating));
+};
+

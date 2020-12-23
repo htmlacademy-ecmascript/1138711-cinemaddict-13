@@ -202,7 +202,7 @@ export default class MoviePresenter {
         const cardID = evt.target.id;
         const currentCard = this._cards.find((card) => card.id === cardID);
 
-        let oldPopUp = document.querySelector(`.film-details`);
+        const oldPopUp = document.querySelector(`.film-details`);
         if (oldPopUp) {
           oldPopUp.remove();
         }

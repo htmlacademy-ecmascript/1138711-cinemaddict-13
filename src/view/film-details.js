@@ -22,9 +22,9 @@ const createCommentsTemplate = (comments) => {
 
 const createEmotionsTemplate = (comments, currentEmoji) => {
   return comments.map((comment) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji"
-  type="radio" id="emoji" value="${comment.emotion}" ${currentEmoji === comment.emotion ? `checked` : ``} >
+  type="radio" id="emoji-${comment.emotion}" value="${comment.emotion}" ${currentEmoji === comment.emotion ? `checked` : ``} >
   <label class="film-details__emoji-label" for="emoji">
-    <img src="./images/emoji/${comment.emotion}.png" width="30" height="30" alt="emoji">
+    <img src="./images/emoji/${comment.emotion}.png" width="30" height="30" alt="emoji-${comment.emotion}">
   </label>`).join(``);
 };
 
@@ -157,7 +157,6 @@ export default class FilmDetails extends Smart {
 
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
-    this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -189,9 +188,6 @@ export default class FilmDetails extends Smart {
     this.getElement()
       .querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, this._favoriteClickHandler);
-    this.getElement()
-      .querySelector(`form`)
-      .addEventListener(`submit`, this._formSubmitHandler);
   }
 
   _emojiClickHandler(evt) {
@@ -207,11 +203,6 @@ export default class FilmDetails extends Smart {
     this.updateData({
       currentComment: evt.target.value
     }, true);
-  }
-
-  _formSubmitHandler(evt) {
-    evt.preventDefault();
-    this._callback.formSubmit(this._data);
   }
 
   _watchListClickHandler(evt) {

@@ -124,19 +124,9 @@ const getRandomRating = function (min, max) {
   return rand.toFixed(1);
 };
 
-const getTimeFromMins = (mins) => {
-  const hours = Math.trunc(mins / 60);
-  const minutes = mins % 60;
-  return hours + `h ` + minutes + `m`;
-};
-
 const generateDuration = () => {
-  // eslint-disable-next-line no-undef
-  const duration = require(`dayjs/plugin/duration`);
-  dayjs.extend(duration);
   const durationGap = getRandomInteger(MIN_DURATION, MAX_DURATION);
-  const minutes = dayjs.duration(durationGap, `minutes`).as(`minutes`);
-  return getTimeFromMins(minutes);
+  return durationGap;
 };
 
 const generateDateComment = () => {
@@ -145,7 +135,7 @@ const generateDateComment = () => {
 };
 
 const generateRealize = () => {
-  return dayjs().subtract(getRandomInteger(0, REALIZE_YEAR), `year`).subtract(getRandomInteger(0, REALIZE_MONTH), `month`).subtract(getRandomInteger(0, REALIZE_DAY), `day`).format(`DD MMM YYYY`);
+  return dayjs().subtract(getRandomInteger(0, REALIZE_YEAR), `year`).subtract(getRandomInteger(0, REALIZE_MONTH), `month`).subtract(getRandomInteger(0, REALIZE_DAY), `day`);
 };
 
 const generateComment = () => {

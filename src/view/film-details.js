@@ -178,7 +178,7 @@ export default class FilmDetails extends Smart {
 
   _setInnerHandlers() {
     this.getElement()
-      .querySelector(`.film-details__emoji-item`)
+      .querySelector(`.film-details__emoji-list`)
       .addEventListener(`change`, this._emojiClickHandler);
     this.getElement()
       .querySelector(`.film-details__comment-input`)

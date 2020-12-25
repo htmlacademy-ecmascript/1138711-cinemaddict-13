@@ -4,8 +4,6 @@ const MIN_RATING = 0;
 const MAX_RATING = 9;
 const MIN_DISCRIPTION = 1;
 const MAX_DISCRIPTION = 5;
-const MIN_DATE = 1960;
-const MAX_DATE = 2020;
 const COMMENT_COUNT = 15;
 const REALIZE_YEAR = 80;
 const REALIZE_MONTH = 12;
@@ -181,7 +179,7 @@ export const generateCard = () => {
     writers: getRandomElement(writers),
     actors: getRandomElement(actors),
     realize: generateRealize(),
-    date: getRandomInteger(MIN_DATE, MAX_DATE),
+    date: generateRealize(),
     duration,
     country: getRandomElement(countrys),
     genres: generateGenres(),

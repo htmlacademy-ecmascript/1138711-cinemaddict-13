@@ -4,8 +4,6 @@ const MIN_RATING = 0;
 const MAX_RATING = 9;
 const MIN_DISCRIPTION = 1;
 const MAX_DISCRIPTION = 5;
-const MIN_DATE = 1960;
-const MAX_DATE = 2020;
 const COMMENT_COUNT = 15;
 const REALIZE_YEAR = 80;
 const REALIZE_MONTH = 12;
@@ -124,19 +122,9 @@ const getRandomRating = function (min, max) {
   return rand.toFixed(1);
 };
 
-const getTimeFromMins = (mins) => {
-  const hours = Math.trunc(mins / 60);
-  const minutes = mins % 60;
-  return hours + `h ` + minutes + `m`;
-};
-
 const generateDuration = () => {
-  // eslint-disable-next-line no-undef
-  const duration = require(`dayjs/plugin/duration`);
-  dayjs.extend(duration);
   const durationGap = getRandomInteger(MIN_DURATION, MAX_DURATION);
-  const minutes = dayjs.duration(durationGap, `minutes`).as(`minutes`);
-  return getTimeFromMins(minutes);
+  return durationGap;
 };
 
 const generateDateComment = () => {
@@ -145,7 +133,7 @@ const generateDateComment = () => {
 };
 
 const generateRealize = () => {
-  return dayjs().subtract(getRandomInteger(0, REALIZE_YEAR), `year`).subtract(getRandomInteger(0, REALIZE_MONTH), `month`).subtract(getRandomInteger(0, REALIZE_DAY), `day`).format(`DD MMM YYYY`);
+  return dayjs().subtract(getRandomInteger(0, REALIZE_YEAR), `year`).subtract(getRandomInteger(0, REALIZE_MONTH), `month`).subtract(getRandomInteger(0, REALIZE_DAY), `day`);
 };
 
 const generateComment = () => {
@@ -191,7 +179,7 @@ export const generateCard = () => {
     writers: getRandomElement(writers),
     actors: getRandomElement(actors),
     realize: generateRealize(),
-    date: getRandomInteger(MIN_DATE, MAX_DATE),
+    date: generateRealize(),
     duration,
     country: getRandomElement(countrys),
     genres: generateGenres(),

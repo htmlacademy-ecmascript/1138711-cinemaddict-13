@@ -1,4 +1,11 @@
 import Smart from "./smart.js";
+import dayjs from "dayjs";
+
+const getTimeFromMins = (mins) => {
+  const hours = Math.trunc(mins / 60);
+  const minutes = mins % 60;
+  return hours + `h ` + minutes + `m`;
+};
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => ` <span class="film-details__genre">${genre}</span>`).join(``);
@@ -13,7 +20,7 @@ const createCommentsTemplate = (comments) => {
     <p class="film-details__comment-text">${comment.text}</p>
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${comment.author}</span>
-      <span class="film-details__comment-day">${comment.date}</span>
+      <span class="film-details__comment-day">${dayjs(comment.date).format(`YYYY MMM DD HH:mm`)}</span>
       <button class="film-details__comment-delete">Delete</button>
     </p>
   </div>
@@ -21,9 +28,9 @@ const createCommentsTemplate = (comments) => {
 };
 
 const createEmotionsTemplate = (comments, currentEmoji) => {
-  return comments.map((comment) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji"
+  return comments.map((comment) => `<input class="film-details__emoji-item visually-hidden" name="emoji-${comment.emotion}"
   type="radio" id="emoji-${comment.emotion}" value="${comment.emotion}" ${currentEmoji === comment.emotion ? `checked` : ``} >
-  <label class="film-details__emoji-label" for="emoji">
+  <label class="film-details__emoji-label" for="emoji-${comment.emotion}">
     <img src="./images/emoji/${comment.emotion}.png" width="30" height="30" alt="emoji-${comment.emotion}">
   </label>`).join(``);
 };
@@ -83,7 +90,7 @@ const createFilmDetailsTemplate = (data) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${duration}</td>
+              <td class="film-details__cell">${getTimeFromMins(duration)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -171,7 +178,7 @@ export default class FilmDetails extends Smart {
 
   _setInnerHandlers() {
     this.getElement()
-      .querySelector(`.film-details__emoji-item`)
+      .querySelector(`.film-details__emoji-list`)
       .addEventListener(`change`, this._emojiClickHandler);
     this.getElement()
       .querySelector(`.film-details__comment-input`)

@@ -1,4 +1,11 @@
 import AbstractView from "./abstract.js";
+import dayjs from "dayjs";
+
+const getTimeFromMins = (mins) => {
+  const hours = Math.trunc(mins / 60);
+  const minutes = mins % 60;
+  return hours + `h ` + minutes + `m`;
+};
 
 const createFilmCardTemplate = (card) => {
   const {id, title, rating, poster, genres, duration, description, date, comments, isFavorite, isWatched, isAddToWatchList} = card;
@@ -15,13 +22,12 @@ const createFilmCardTemplate = (card) => {
     ? `film-card__controls-item--mark-as-watched film-card__controls-item--active`
     : `film-card__controls-item--mark-as-watched`;
 
-
   return `<article class="film-card">
   <h3 class="film-card__title" id="${id}">${title}</h3>
   <p class="film-card__rating">${rating}</p>
   <p class="film-card__info">
-    <span class="film-card__year">${date}</span>
-    <span class="film-card__duration">${duration}</span>
+    <span class="film-card__year">${dayjs(date).format(`DD MMM YYYY`)}</span>
+    <span class="film-card__duration">${getTimeFromMins(duration)}</span>
     <span class="film-card__genre">${genres}</span>
   </p>
   <img src="${poster}" alt="" class="film-card__poster" id="${id}">

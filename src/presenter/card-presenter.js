@@ -1,5 +1,5 @@
 import FilmCard from "../view/film-card.js";
-import {render, RenderPosition, replace, remove} from "../utils.js";
+import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
 
 const siteMainElement = document.querySelector(`.main`);
 
@@ -45,6 +45,8 @@ export default class CardPresenter {
 
   _handleAddToWatchList() {
     this._changeData(
+        UserAction.UPDATE_TASK,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -57,6 +59,8 @@ export default class CardPresenter {
 
   _handleWatchedClick() {
     this._changeData(
+        UserAction.UPDATE_TASK,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,
@@ -69,6 +73,8 @@ export default class CardPresenter {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_TASK,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._card,

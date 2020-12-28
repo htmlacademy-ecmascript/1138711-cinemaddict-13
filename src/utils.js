@@ -13,6 +13,25 @@ export const SortType = {
   RATING: `rating`
 };
 
+export const UserAction = {
+  UPDATE_CARD: `UPDATE_CARD`
+  // ADD_CARD: `ADD_CARD`,
+  // DELETE_CARD: `DELETE_CARD`
+};
+
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+  FAVORITES: `favorites`
+};
+
 export const render = (container, child, place) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
@@ -51,6 +70,10 @@ export const replace = (newChild, oldChild) => {
 };
 
 export const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof AbstractView)) {
     throw new Error(`Can remove only components`);
   }

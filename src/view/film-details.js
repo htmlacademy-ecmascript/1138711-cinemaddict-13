@@ -1,5 +1,6 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
+import he from "he";
 
 const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
@@ -161,6 +162,8 @@ export default class FilmDetails extends Smart {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._clickHandler = this._clickHandler.bind(this);
+    this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
+    this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
 
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -174,6 +177,8 @@ export default class FilmDetails extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this.setDeleteCommentHandler(this._callback.deleteClick);
+    this.setAddCommentHandler(this._callback.addClick);
   }
 
   _setInnerHandlers() {
@@ -208,22 +213,31 @@ export default class FilmDetails extends Smart {
   _descriptionInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      currentComment: evt.target.value
+      currentComment: he.encode(evt.target.value)
     }, true);
   }
 
   _watchListClickHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      isAddToWatchList: !this._data.isAddToWatchList
+    });
     this._callback.watchListClick();
   }
 
   _watchedClickHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      isWatched: !this._data.isWatched
+    });
     this._callback.watchedClick();
   }
 
   _favoriteClickHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    });
     this._callback.favoriteClick();
   }
 
@@ -251,4 +265,27 @@ export default class FilmDetails extends Smart {
     this._callback.click = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
   }
+
+  _deleteCommentClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(
+    );
+  }
+
+  setDeleteCommentHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, this._deleteCommentClickHandler);
+  }
+
+  _addCommentClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.addClick(
+    );
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addClick = callback;
+    this.getElement().querySelector(`.film-details__comments-count`).addEventListener(`click`, this._addCommentClickHandler);
+  }
+
 }

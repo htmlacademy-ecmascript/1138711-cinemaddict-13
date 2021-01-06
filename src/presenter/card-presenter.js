@@ -10,9 +10,10 @@ export default class CardPresenter {
 
     this._cardComponent = null;
 
-    this._handleAddToWatchList = this._handleAddToWatchList.bind(this);
+    this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+
   }
 
   init(card) {
@@ -22,7 +23,7 @@ export default class CardPresenter {
 
     this._cardComponent = new FilmCard(card);
 
-    this._cardComponent.setWatchListHandler(this._handleAddToWatchList);
+    this._cardComponent.setWatchListHandler(this._handleAddToWatchListClick);
     this._cardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._cardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
@@ -43,9 +44,9 @@ export default class CardPresenter {
     remove(this._cardComponent);
   }
 
-  _handleAddToWatchList() {
+  _handleAddToWatchListClick() {
     this._changeData(
-        UserAction.UPDATE_TASK,
+        UserAction.UPDATE_CARD,
         UpdateType.MINOR,
         Object.assign(
             {},
@@ -59,7 +60,7 @@ export default class CardPresenter {
 
   _handleWatchedClick() {
     this._changeData(
-        UserAction.UPDATE_TASK,
+        UserAction.UPDATE_CARD,
         UpdateType.MINOR,
         Object.assign(
             {},
@@ -73,7 +74,7 @@ export default class CardPresenter {
 
   _handleFavoriteClick() {
     this._changeData(
-        UserAction.UPDATE_TASK,
+        UserAction.UPDATE_CARD,
         UpdateType.MINOR,
         Object.assign(
             {},
@@ -84,5 +85,4 @@ export default class CardPresenter {
         )
     );
   }
-
 }

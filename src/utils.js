@@ -14,9 +14,9 @@ export const SortType = {
 };
 
 export const UserAction = {
-  UPDATE_CARD: `UPDATE_CARD`
-  // ADD_CARD: `ADD_CARD`,
-  // DELETE_CARD: `DELETE_CARD`
+  UPDATE_CARD: `UPDATE_CARD`,
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
 };
 
 export const UpdateType = {
@@ -90,20 +90,12 @@ export const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-// Принцип работы прост:
-// 1. создаём пустой div-блок
-// 2. берём HTML в виде строки и вкладываем в этот div-блок, превращая в DOM-элемент
-// 3. возвращаем этот DOM-элемент
 export const createElement = (template) => {
-  const newElement = document.createElement(`div`); // 1
-  newElement.innerHTML = template; // 2
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
 
-  return newElement.firstElementChild; // 3
+  return newElement.firstElementChild;
 };
-
-// Единственный нюанс, что HTML в строке должен иметь общую обёртку,
-// то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
-// а не просто <a>Link 1</a><a>Link 2</a>
 
 export const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
@@ -146,6 +138,6 @@ export const sortCardRating = (cardA, cardB) => {
     return weight;
   }
 
-  return dayjs(cardA.rating).diff(dayjs(cardB.rating));
+  return cardA.rating - cardB.rating;
 };
 

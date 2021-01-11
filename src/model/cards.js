@@ -40,6 +40,12 @@ export default class Cards extends Observer {
   }
 
   deleteComment(updateType, update) {
+
+    // const cardsComments = this._cards.map((card) => card.comments);
+    // // eslint-disable-next-line prefer-spread
+    // const commonComments = [].concat.apply([], cardsComments);
+    // const index = commonComments.findIndex((commonComment) => commonComment.id === update);
+
     const index = this._cards.findIndex((card) => card.id === update.id);
 
     if (index === -1) {

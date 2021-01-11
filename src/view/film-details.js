@@ -22,7 +22,7 @@ const createCommentsTemplate = (comments) => {
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${comment.author}</span>
       <span class="film-details__comment-day">${dayjs(comment.date).format(`YYYY MMM DD HH:mm`)}</span>
-      <button class="film-details__comment-delete">Delete</button>
+      <button  id="${comment.id}" class="film-details__comment-delete">Delete</button>
     </p>
   </div>
 </li>`).join(``);
@@ -163,7 +163,7 @@ export default class FilmDetails extends Smart {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._clickHandler = this._clickHandler.bind(this);
     this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
-    this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
+    // this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
 
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -178,7 +178,7 @@ export default class FilmDetails extends Smart {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setDeleteCommentHandler(this._callback.deleteClick);
-    this.setAddCommentHandler(this._callback.addClick);
+    // this.setAddCommentHandler(this._callback.addClick);
   }
 
   _setInnerHandlers() {
@@ -268,24 +268,36 @@ export default class FilmDetails extends Smart {
 
   _deleteCommentClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteClick(
-    );
+    const commentId = evt.target.id;
+    const commentsCopy = this._data.comments;
+    const currentComment = commentsCopy.findIndex((comment) => comment.id === commentId);
+    if (currentComment > -1) {
+      commentsCopy.splice(currentComment, 1);
+    }
+    this.updateData({
+      comments: commentsCopy
+    });
+    this._callback.deleteClick();
   }
 
   setDeleteCommentHandler(callback) {
     this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.film-details__comment-delete`).addEventListener(`click`, this._deleteCommentClickHandler);
+    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName === `BUTTON`) {
+        this._deleteCommentClickHandler(evt);
+      }
+    });
   }
 
-  _addCommentClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.addClick(
-    );
-  }
+  // _addCommentClickHandler(evt) {
+  //   evt.preventDefault();
+  //   this._callback.addClick(
+  //   );
+  // }
 
-  setAddCommentHandler(callback) {
-    this._callback.addClick = callback;
-    this.getElement().querySelector(`.film-details__comments-count`).addEventListener(`click`, this._addCommentClickHandler);
-  }
+  // setAddCommentHandler(callback) {
+  //   this._callback.addClick = callback;
+  //   this.getElement().querySelector(`.film-details__comments-count`).addEventListener(`click`, this._addCommentClickHandler);
+  // }
 
 }

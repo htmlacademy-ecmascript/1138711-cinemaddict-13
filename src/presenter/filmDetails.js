@@ -1,11 +1,11 @@
 import FilmDetails from "../view/film-details.js";
 import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
-import {generateId} from "../mock/cards.js";
 
 const body = document.querySelector(`body`);
 
 export default class FilmDetailsPresenter {
   constructor(filmDetailsContainer, changeData) {
+
     this._filmDetailsContainer = filmDetailsContainer;
     this._changeData = changeData;
 
@@ -15,13 +15,14 @@ export default class FilmDetailsPresenter {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
-    this._handleAddCommentClick = this._handleAddCommentClick.bind(this);
+    // this._handleAddCommentClick = this._handleAddCommentClick.bind(this);
 
     this._closeFilmDetails = this._closeFilmDetails.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   init(card) {
+
     this._card = card;
 
     const prevfilmDetailsComponent = this._filmDetailsComponent;
@@ -31,7 +32,7 @@ export default class FilmDetailsPresenter {
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmDetailsComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
-    this._filmDetailsComponent.setAddCommentHandler(this._handleAddCommentClick);
+    // this._filmDetailsComponent.setAddCommentHandler(this._handleAddCommentClick);
 
     this._filmDetailsComponent.setClickHandler(this._closeFilmDetails);
     document.addEventListener(`keydown`, this._onEscKeyDown);
@@ -48,6 +49,14 @@ export default class FilmDetailsPresenter {
     remove(prevfilmDetailsComponent);
   }
 
+  updatePopUp(card) {
+    this._card = card;
+  }
+
+  destroy() {
+    remove(this._filmDetailsComponent);
+  }
+
   _closeFilmDetails() {
     remove(this._filmDetailsComponent);
     body.classList.remove(`hide-overflow`);
@@ -60,65 +69,59 @@ export default class FilmDetailsPresenter {
     }
   }
 
-  destroy() {
-    remove(this._filmDetailsComponent);
-  }
-
   _handleAddToWatchListClick() {
+    const card = Object.assign(this._card,
+        {
+          isAddToWatchList: !this._card.isAddToWatchList
+        });
     this._changeData(
         UserAction.UPDATE_CARD,
         UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._card,
-            {
-              isAddToWatchList: !this._card.isAddToWatchList
-            }
-        )
+        card
     );
   }
 
   _handleWatchedClick() {
+    const card = Object.assign(this._card,
+        {
+          isWatched: !this._card.isWatched
+        });
     this._changeData(
         UserAction.UPDATE_CARD,
         UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._card,
-            {
-              isWatched: !this._card.isWatched
-            }
-        )
+        card
     );
   }
 
   _handleFavoriteClick() {
+    const card = Object.assign(this._card,
+        {
+          isFavorite: !this._card.isFavorite
+        });
     this._changeData(
         UserAction.UPDATE_CARD,
         UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._card,
-            {
-              isFavorite: !this._card.isFavorite
-            }
-        )
+        card
     );
   }
 
-  _handleDeleteCommentClick(comment) {
+  _handleDeleteCommentClick(commentsCopy) {
+    const card = Object.assign(this._card,
+        {
+          comments: commentsCopy
+        });
     this._changeData(
         UserAction.DELETE_COMMENT,
         UpdateType.MINOR,
-        Object.assign({id: `ID` + generateId()}, comment)
+        card
     );
   }
 
-  _handleAddCommentClick(comment) {
-    this._changeData(
-        UserAction.ADD_COMMENT,
-        UpdateType.MINOR,
-        Object.assign({id: `ID` + generateId()}, comment)
-    );
-  }
+  // _handleAddCommentClick(comment) {
+  //   this._changeData(
+  //       UserAction.ADD_COMMENT,
+  //       UpdateType.MINOR,
+  //       Object.assign({id: `ID` + generateId()}, comment)
+  //   );
+  // }
 }

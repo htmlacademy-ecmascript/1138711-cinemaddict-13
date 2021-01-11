@@ -128,7 +128,7 @@ const getWeightForNullDate = (dateA, dateB) => {
 };
 
 export const sortCardUp = (cardA, cardB) => {
-  return dayjs(cardA.date).diff(dayjs(cardB.date));
+  return dayjs(cardB.date).diff(dayjs(cardA.date));
 };
 
 export const sortCardRating = (cardA, cardB) => {
@@ -138,6 +138,6 @@ export const sortCardRating = (cardA, cardB) => {
     return weight;
   }
 
-  return cardA.rating - cardB.rating;
+  return cardB.rating - cardA.rating;
 };
 

@@ -138,6 +138,7 @@ const generateRealize = () => {
 
 const generateComment = () => {
   return {
+    id: `id` + generateId(),
     text: generateDescription(),
     emotion: getRandomElement(emotions),
     date: generateDateComment(),

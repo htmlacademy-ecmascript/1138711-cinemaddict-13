@@ -1,6 +1,7 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
 import he from "he";
+import {generateId} from "../mock/cards.js";
 
 const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
@@ -163,7 +164,7 @@ export default class FilmDetails extends Smart {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._clickHandler = this._clickHandler.bind(this);
     this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
-    // this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
+    this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
 
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -178,7 +179,7 @@ export default class FilmDetails extends Smart {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setDeleteCommentHandler(this._callback.deleteClick);
-    // this.setAddCommentHandler(this._callback.addClick);
+    this.setAddCommentHandler(this._callback.addClick);
   }
 
   _setInnerHandlers() {
@@ -269,15 +270,13 @@ export default class FilmDetails extends Smart {
   _deleteCommentClickHandler(evt) {
     evt.preventDefault();
     const commentId = evt.target.id;
-    const commentsCopy = this._data.comments;
+    const commentsCopy = this._data.comments.slice();
     const currentComment = commentsCopy.findIndex((comment) => comment.id === commentId);
-    if (currentComment > -1) {
-      commentsCopy.splice(currentComment, 1);
-    }
+    commentsCopy.splice(currentComment, 1);
     this.updateData({
       comments: commentsCopy
     });
-    this._callback.deleteClick();
+    this._callback.deleteClick(commentsCopy);
   }
 
   setDeleteCommentHandler(callback) {
@@ -289,15 +288,31 @@ export default class FilmDetails extends Smart {
     });
   }
 
-  // _addCommentClickHandler(evt) {
-  //   evt.preventDefault();
-  //   this._callback.addClick(
-  //   );
-  // }
+  _addCommentClickHandler(evt) {
+    evt.preventDefault();
+    const newComment = {};
+    const commentId = `id` + generateId();
+    const commentEmotion = this._data.currentEmoji;
+    const commentValue = he.encode(evt.target.value);
+    newComment.id = commentId;
+    newComment.emotion = commentEmotion;
+    newComment.text = commentValue;
+    newComment.author = `Young Yougn`;
+    const commentsCopy = this._data.comments.slice();
+    commentsCopy.push(newComment);
 
-  // setAddCommentHandler(callback) {
-  //   this._callback.addClick = callback;
-  //   this.getElement().querySelector(`.film-details__comments-count`).addEventListener(`click`, this._addCommentClickHandler);
-  // }
+    this.updateData({
+      comments: commentsCopy
+    });
+    this._callback.addClick(commentsCopy);
+  }
 
+  setAddCommentHandler(callback) {
+    this._callback.addClick = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
+      if (evt.ctrlKey && evt.key === `Enter`) {
+        this._addCommentClickHandler(evt);
+      }
+    });
+  }
 }

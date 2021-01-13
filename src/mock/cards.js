@@ -138,6 +138,7 @@ const generateRealize = () => {
 
 const generateComment = () => {
   return {
+    id: `id` + generateId(),
     text: generateDescription(),
     emotion: getRandomElement(emotions),
     date: generateDateComment(),
@@ -163,7 +164,7 @@ const generateGenres = () => {
   return genres.slice(0, getRandomInteger(1, GENRE_COUNT));
 };
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 export const generateCard = () => {
   const comments = getCommentBlocks();

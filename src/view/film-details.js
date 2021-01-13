@@ -1,5 +1,7 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
+import he from "he";
+import {generateId} from "../mock/cards.js";
 
 const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
@@ -21,7 +23,7 @@ const createCommentsTemplate = (comments) => {
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${comment.author}</span>
       <span class="film-details__comment-day">${dayjs(comment.date).format(`YYYY MMM DD HH:mm`)}</span>
-      <button class="film-details__comment-delete">Delete</button>
+      <button  id="${comment.id}" class="film-details__comment-delete">Delete</button>
     </p>
   </div>
 </li>`).join(``);
@@ -161,6 +163,8 @@ export default class FilmDetails extends Smart {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._clickHandler = this._clickHandler.bind(this);
+    this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
+    this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
 
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
@@ -174,6 +178,8 @@ export default class FilmDetails extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this.setDeleteCommentHandler(this._callback.deleteClick);
+    this.setAddCommentHandler(this._callback.addClick);
   }
 
   _setInnerHandlers() {
@@ -208,22 +214,31 @@ export default class FilmDetails extends Smart {
   _descriptionInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      currentComment: evt.target.value
+      currentComment: he.encode(evt.target.value)
     }, true);
   }
 
   _watchListClickHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      isAddToWatchList: !this._data.isAddToWatchList
+    });
     this._callback.watchListClick();
   }
 
   _watchedClickHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      isWatched: !this._data.isWatched
+    });
     this._callback.watchedClick();
   }
 
   _favoriteClickHandler(evt) {
     evt.preventDefault();
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    });
     this._callback.favoriteClick();
   }
 
@@ -250,5 +265,54 @@ export default class FilmDetails extends Smart {
   setClickHandler(callback) {
     this._callback.click = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+  }
+
+  _deleteCommentClickHandler(evt) {
+    evt.preventDefault();
+    const commentId = evt.target.id;
+    const commentsCopy = this._data.comments.slice();
+    const currentComment = commentsCopy.findIndex((comment) => comment.id === commentId);
+    commentsCopy.splice(currentComment, 1);
+    this.updateData({
+      comments: commentsCopy
+    });
+    this._callback.deleteClick(commentsCopy);
+  }
+
+  setDeleteCommentHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName === `BUTTON`) {
+        this._deleteCommentClickHandler(evt);
+      }
+    });
+  }
+
+  _addCommentClickHandler(evt) {
+    evt.preventDefault();
+    const newComment = {};
+    const commentId = `id` + generateId();
+    const commentEmotion = this._data.currentEmoji;
+    const commentValue = he.encode(evt.target.value);
+    newComment.id = commentId;
+    newComment.emotion = commentEmotion;
+    newComment.text = commentValue;
+    newComment.author = `Young Yougn`;
+    const commentsCopy = this._data.comments.slice();
+    commentsCopy.push(newComment);
+
+    this.updateData({
+      comments: commentsCopy
+    });
+    this._callback.addClick(commentsCopy);
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addClick = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
+      if (evt.ctrlKey && evt.key === `Enter`) {
+        this._addCommentClickHandler(evt);
+      }
+    });
   }
 }

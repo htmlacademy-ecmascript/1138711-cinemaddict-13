@@ -1,7 +1,7 @@
 import {generateCard} from "./mock/cards.js";
 import FooterStatistics from "./view/footer-statistics.js";
 import {render, RenderPosition} from "./utils.js";
-import MoviePresenter from "./presenter/movie-presenter.js";
+import MoviePresenter from "./presenter/movies.js";
 import FilterPresenter from "./presenter/filter.js";
 import CardsModel from "./model/cards.js";
 import FilterModel from "./model/filter.js";

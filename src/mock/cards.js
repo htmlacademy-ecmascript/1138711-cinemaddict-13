@@ -166,6 +166,11 @@ const generateGenres = () => {
 
 export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
+const generateWatchingDate = () => {
+  return dayjs().subtract(getRandomInteger(0, 1), `year`).subtract(getRandomInteger(0, REALIZE_MONTH), `month`).subtract(getRandomInteger(0, REALIZE_DAY), `day`);
+};
+
+
 export const generateCard = () => {
   const comments = getCommentBlocks();
   const duration = generateDuration();
@@ -189,6 +194,7 @@ export const generateCard = () => {
     ageRating: getRandomElement(ages),
     isAddToWatchList: Boolean(getRandomInteger(0, 1)),
     isWatched: Boolean(getRandomInteger(0, 1)),
-    isFavorite: Boolean(getRandomInteger(0, 1))
+    isFavorite: Boolean(getRandomInteger(0, 1)),
+    watching: generateWatchingDate()
   };
 };

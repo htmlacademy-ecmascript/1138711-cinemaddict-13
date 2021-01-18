@@ -7,7 +7,6 @@ const createShowMoreBtnTemplate = () => {
 export default class ShowMoreBtn extends AbstractView {
   constructor() {
     super();
-
     // 4. Теперь обработчик - метод класса, а не стрелочная функция.
     // Поэтому при передаче в addEventListener он теряет контекст (this),
     // а с контекстом - доступ к свойствам и методам.
@@ -20,12 +19,6 @@ export default class ShowMoreBtn extends AbstractView {
     return createShowMoreBtnTemplate();
   }
 
-  _clickHandler(evt) {
-    evt.preventDefault();
-    // 3. А внутри абстрактного обработчика вызовем колбэк
-    this._callback.click();
-  }
-
   setClickHandler(callback) {
     // Мы могли бы сразу передать callback в addEventListener,
     // но тогда бы для удаления обработчика в будущем,
@@ -36,5 +29,11 @@ export default class ShowMoreBtn extends AbstractView {
     this._callback.click = callback;
     // 2. В addEventListener передадим абстрактный обработчик
     this.getElement().addEventListener(`click`, this._clickHandler);
+  }
+
+  _clickHandler(evt) {
+    evt.preventDefault();
+    // 3. А внутри абстрактного обработчика вызовем колбэк
+    this._callback.click();
   }
 }

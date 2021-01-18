@@ -178,8 +178,8 @@ export default class FilmDetails extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this.setDeleteCommentHandler(this._callback.deleteClick);
-    this.setAddCommentHandler(this._callback.addClick);
+    this.setDeleteCommentHandler(this._callback.delete);
+    this.setAddCommentHandler(this._callback.add);
   }
 
   _setInnerHandlers() {
@@ -218,12 +218,22 @@ export default class FilmDetails extends Smart {
     }, true);
   }
 
+  setWatchListHandler(callback) {
+    this._callback.watchListClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchListClickHandler);
+  }
+
   _watchListClickHandler(evt) {
     evt.preventDefault();
     this.updateData({
       isAddToWatchList: !this._data.isAddToWatchList
     });
     this._callback.watchListClick();
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
   }
 
   _watchedClickHandler(evt) {
@@ -234,6 +244,11 @@ export default class FilmDetails extends Smart {
     this._callback.watchedClick();
   }
 
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+
   _favoriteClickHandler(evt) {
     evt.preventDefault();
     this.updateData({
@@ -242,29 +257,23 @@ export default class FilmDetails extends Smart {
     this._callback.favoriteClick();
   }
 
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+  }
+
   _clickHandler(evt) {
     evt.preventDefault();
     this._callback.click();
   }
 
-  setWatchListHandler(callback) {
-    this._callback.watchListClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchListClickHandler);
-  }
-
-  setWatchedClickHandler(callback) {
-    this._callback.watchedClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
-  }
-
-  setFavoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
-  }
-
-  setClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+  setDeleteCommentHandler(callback) {
+    this._callback.delete = callback;
+    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName === `BUTTON`) {
+        this._deleteCommentClickHandler(evt);
+      }
+    });
   }
 
   _deleteCommentClickHandler(evt) {
@@ -276,14 +285,14 @@ export default class FilmDetails extends Smart {
     this.updateData({
       comments: commentsCopy
     });
-    this._callback.deleteClick(commentsCopy);
+    this._callback.delete(commentsCopy);
   }
 
-  setDeleteCommentHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.film-details__comments-list`).addEventListener(`click`, (evt) => {
-      if (evt.target.tagName === `BUTTON`) {
-        this._deleteCommentClickHandler(evt);
+  setAddCommentHandler(callback) {
+    this._callback.add = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
+      if (evt.ctrlKey && evt.key === `Enter`) {
+        this._addCommentClickHandler(evt);
       }
     });
   }
@@ -298,21 +307,12 @@ export default class FilmDetails extends Smart {
     newComment.emotion = commentEmotion;
     newComment.text = commentValue;
     newComment.author = `Young Yougn`;
-    const commentsCopy = this._data.comments.slice();
-    commentsCopy.push(newComment);
+    const commentsCopies = this._data.comments.slice();
+    commentsCopies.push(newComment);
 
     this.updateData({
-      comments: commentsCopy
+      comments: commentsCopies
     });
-    this._callback.addClick(commentsCopy);
-  }
-
-  setAddCommentHandler(callback) {
-    this._callback.addClick = callback;
-    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, (evt) => {
-      if (evt.ctrlKey && evt.key === `Enter`) {
-        this._addCommentClickHandler(evt);
-      }
-    });
+    this._callback.add(commentsCopies);
   }
 }

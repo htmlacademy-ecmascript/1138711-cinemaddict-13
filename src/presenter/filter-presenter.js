@@ -2,13 +2,15 @@ import FilterView from "../view/filters.js";
 import {render, RenderPosition, replace, remove, UpdateType, FilterType} from "../utils.js";
 import {filter} from "../utils/filter.js";
 
+
 export default class Filter {
-  constructor(filterContainer, filterModel, cardsModel) {
+  constructor(filterContainer, filterModel, cardsModel, handleSiteMenuClick) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._cardsModel = cardsModel;
-    this._currentFilter = null;
+    this._handleSiteMenuClick = handleSiteMenuClick;
 
+    this._currentFilter = null;
     this._filterComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -26,6 +28,7 @@ export default class Filter {
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterComponent.setMenuClickHandler(this._handleSiteMenuClick);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
@@ -54,8 +57,8 @@ export default class Filter {
     return [
       {
         type: FilterType.ALL,
-        name: `All`,
-        count: filter[FilterType.ALL](cards).length
+        name: `All movies`,
+        count: ` `
       },
       {
         type: FilterType.WATCHLIST,
@@ -74,4 +77,5 @@ export default class Filter {
       }
     ];
   }
+
 }

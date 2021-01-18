@@ -32,6 +32,11 @@ export const FilterType = {
   FAVORITES: `favorites`
 };
 
+export const MenuItem = {
+  CARDS: `CARDS`,
+  STATISTICS: `STATISTICS`
+};
+
 export const render = (container, child, place) => {
   if (container instanceof AbstractView) {
     container = container.getElement();

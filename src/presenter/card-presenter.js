@@ -13,7 +13,6 @@ export default class CardPresenter {
     this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-
   }
 
   init(card) {

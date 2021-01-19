@@ -2,6 +2,10 @@ import Smart from "./smart.js";
 import dayjs from "dayjs";
 import he from "he";
 import {generateId} from "../mock/cards.js";
+// eslint-disable-next-line quotes
+// eslint-disable-next-line no-undef
+const relativeTime = require(`dayjs/plugin/relativeTime`);
+dayjs.extend(relativeTime);
 
 const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
@@ -13,16 +17,24 @@ const createGenresTemplate = (genres) => {
   return genres.map((genre) => ` <span class="film-details__genre">${genre}</span>`).join(``);
 };
 
+const setConnectLength = (comment) => {
+  if (comment.length > 139) {
+    return comment.slice(0, 139) + `...`;
+  } else {
+    return comment;
+  }
+};
+
 const createCommentsTemplate = (comments) => {
   return comments.map((comment) => `<li class="film-details__comment">
   <span class="film-details__comment-emoji">
     <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-smile">
   </span>
   <div>
-    <p class="film-details__comment-text">${comment.text}</p>
+    <p class="film-details__comment-text">${setConnectLength(comment.text)}</p>
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${comment.author}</span>
-      <span class="film-details__comment-day">${dayjs(comment.date).format(`YYYY MMM DD HH:mm`)}</span>
+      <span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>
       <button  id="${comment.id}" class="film-details__comment-delete">Delete</button>
     </p>
   </div>
@@ -99,7 +111,7 @@ const createFilmDetailsTemplate = (data) => {
               <td class="film-details__cell">${country}</td>
             </tr>
             <tr class="film-details__row">
-              <td class="film-details__term">Genres</td>
+              <td class="film-details__term">${genres.length === 1 ? `Genre` : `Genres` }</td>
               <td class="film-details__cell">
               ${currentGenres}
             </tr>

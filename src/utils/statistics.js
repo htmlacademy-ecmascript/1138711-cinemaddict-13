@@ -30,5 +30,5 @@ export const DaysNumber = {
   WEEK: 7,
   MONTH: 30,
   YEAR: 365,
-  ALL_TIME: 365
+  ALL_TIME: 1000
 };

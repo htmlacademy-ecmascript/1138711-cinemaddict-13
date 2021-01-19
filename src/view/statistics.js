@@ -15,7 +15,7 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
   statisticCtx.height = BAR_HEIGHT * 5;
 
   const getCardsForPeriod = (card, dateA, dateB) => {
-    return card.watching >= dateA && card.watching <= dateB;
+    return card.isWatched && card.watching >= dateA && card.watching <= dateB;
   };
   const filtredCards = cards.filter((card) => getCardsForPeriod(card, dateFrom, dateTo));
 
@@ -23,7 +23,7 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
   const mergedTotalGenres = [].concat(...totalGenres);
   const uniqGenres = makeItemsUniq(mergedTotalGenres);
 
-  const cardsGenresCounts = [];
+  const cardsGenresCounts = {};
   for (let i in mergedTotalGenres) {
     if (cardsGenresCounts[mergedTotalGenres[i]] !== undefined) {
       (cardsGenresCounts[mergedTotalGenres[i]]++);
@@ -92,10 +92,10 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
 };
 
 const createStatisticsTemplate = (data) => {
-  const {cards, dateFrom, dateTo} = data;
+  const {cards, dateFrom, dateTo, currentPeriod} = data;
 
   const getCardsForPeriod = (card, dateA, dateB) => {
-    return card.watching >= dateA && card.watching <= dateB;
+    return card.isWatched && card.watching >= dateA && card.watching <= dateB;
   };
   const filtredCards = cards.filter((card) => getCardsForPeriod(card, dateFrom, dateTo));
 
@@ -122,19 +122,19 @@ const createStatisticsTemplate = (data) => {
   <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
     <p class="statistic__filters-description">Show stats:</p>
 
-    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" ${currentPeriod === Period.ALL_TIME ? `checked` : ``} value="all-time" checked>
     <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" ${currentPeriod === Period.TODAY ? `checked` : ``} value="today">
     <label for="statistic-today" class="statistic__filters-label">Today</label>
 
-    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" ${currentPeriod === Period.WEEK ? `checked` : ``} value="week">
     <label for="statistic-week" class="statistic__filters-label">Week</label>
 
-    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" ${currentPeriod === Period.MONTH ? `checked` : ``} value="month">
     <label for="statistic-month" class="statistic__filters-label">Month</label>
 
-    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+    <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" ${currentPeriod === Period.YEAR ? `checked` : ``} value="year">
     <label for="statistic-year" class="statistic__filters-label">Year</label>
   </form>
 
@@ -149,7 +149,7 @@ const createStatisticsTemplate = (data) => {
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${mostPopularGenres[0] === undefined ? `0` : mostPopularGenres[0]}</p>
+      <p class="statistic__item-text">${mostPopularGenres.length === 0 ? `0` : mostPopularGenres[0]}</p>
     </li>
   </ul>
 
@@ -168,16 +168,14 @@ export default class Statistics extends Smart {
       cards,
       // По условиям техзадания по умолчанию интервал - за все время
       dateFrom: (() => {
-        const daysPeriod = 365;
+        const daysPeriod = 1000;
         return dayjs().subtract(daysPeriod, `day`).toDate();
       })(),
-      dateTo: dayjs().toDate()
+      dateTo: dayjs().toDate(),
+      currentPeriod: ``
     };
 
     this._diagrams = null;
-    this._dateChange = null;
-
-    this._dateChangeHandler = this._dateChangeHandler.bind(this);
 
     this._setDiagrams();
     this._setDateChange();
@@ -186,14 +184,8 @@ export default class Statistics extends Smart {
   removeElement() {
     super.removeElement();
 
-    if (this._diagrams !== null || this._dateChange !== null) {
+    if (this._diagrams !== null) {
       this._diagrams = null;
-      this._dateChange = null;
-    }
-
-    if (this._dateChange) {
-      this._dateChange.destroy();
-      this._dateChange = null;
     }
   }
 
@@ -206,55 +198,44 @@ export default class Statistics extends Smart {
     this._setDateChange();
   }
 
-  _dateChangeHandler([dateFrom, dateTo]) {
-    if (!dateFrom || !dateTo) {
-      return;
-    }
-
-    this.updateData({
-      dateFrom,
-      dateTo
-    });
-  }
-
   _setDateChange() {
-    if (this._dateChange) {
-      this._dateChange.destroy();
-      this._dateChange = null;
-    }
-
-    this._dateChange = this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, (evt) => {
-      if (evt.target.tagName) {
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, (evt) => {
+      if (evt.target.tagName === `INPUT`) {
         const currentPeriod = evt.target.value;
         if (currentPeriod === Period.ALL_TIME) {
           this.updateData({
             dateFrom: (() => {
               return dayjs().subtract(DaysNumber.ALL_TIME, `day`).toDate();
-            })()
+            })(),
+            currentPeriod: Period.ALL_TIME
           });
         } else if (currentPeriod === Period.TODAY) {
           this.updateData({
             dateFrom: (() => {
               return dayjs().subtract(DaysNumber.TODAY, `day`).toDate();
-            })()
+            })(),
+            currentPeriod: Period.TODAY
           });
         } else if (currentPeriod === Period.WEEK) {
           this.updateData({
             dateFrom: (() => {
               return dayjs().subtract(DaysNumber.WEEK, `day`).toDate();
-            })()
+            })(),
+            currentPeriod: Period.WEEK
           });
         } else if (currentPeriod === Period.MONTH) {
           this.updateData({
             dateFrom: (() => {
               return dayjs().subtract(DaysNumber.MONTH, `day`).toDate();
-            })()
+            })(),
+            currentPeriod: Period.MONTH
           });
         } else if (currentPeriod === Period.YEAR) {
           this.updateData({
             dateFrom: (() => {
               return dayjs().subtract(DaysNumber.YEAR, `day`).toDate();
-            })()
+            })(),
+            currentPeriod: Period.YEAR
           });
         }
       }
@@ -262,11 +243,6 @@ export default class Statistics extends Smart {
   }
 
   _setDiagrams() {
-    if (this._diagrams !== null || this._dateChange !== null) {
-      this._diagrams = null;
-      this._dateChange = null;
-    }
-
     const {cards, dateFrom, dateTo} = this._data;
     const diagramsCtx = this.getElement().querySelector(`.statistic__chart`);
     this._diagrams = renderDiagram(diagramsCtx, cards, dateFrom, dateTo);

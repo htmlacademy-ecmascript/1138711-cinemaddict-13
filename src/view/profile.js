@@ -1,14 +1,15 @@
+import {Rank, SpecialName} from "../utils.js";
 import AbstractView from "./abstract.js";
 
 const getRankOfUser = (cards) => {
   const cardsLength = cards.filter((card) => card.isWatched).length;
   let rank = ``;
-  if (cardsLength >= 1 && cardsLength <= 10) {
-    rank = `novice`;
-  } else if (cardsLength >= 11 && cardsLength <= 20) {
-    rank = `fan`;
-  } else if (cardsLength >= 21) {
-    rank = `movie buff`;
+  if (cardsLength >= SpecialName.ONE && cardsLength <= SpecialName.TEN) {
+    rank = Rank.NOVICE;
+  } else if (cardsLength >= SpecialName.ELEVEN && cardsLength <= SpecialName.TWENTY) {
+    rank = Rank.FAN;
+  } else if (cardsLength >= SpecialName.TWENTY_ONE) {
+    rank = Rank.MOVIE_BUFF;
   }
   return rank;
 };

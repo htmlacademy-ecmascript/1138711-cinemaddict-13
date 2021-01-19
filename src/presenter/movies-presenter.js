@@ -235,7 +235,7 @@ export default class MoviePresenter {
     }
   }
 
-  _renderFilmDetails() {
+  _setFilmsClickHandler() {
     const films = siteMainElement.querySelector(`.films`);
     films.addEventListener(`click`, this._filmsClickHandler);
   }
@@ -286,6 +286,6 @@ export default class MoviePresenter {
     // this._renderFilmListRated();
     // this._renderFilmListCommented();
 
-    this._renderFilmDetails();
+    this._setFilmsClickHandler();
   }
 }

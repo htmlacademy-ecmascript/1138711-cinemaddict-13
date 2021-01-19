@@ -7,17 +7,21 @@ import {
   getRestMinutes,
   makeItemsUniq,
   Period,
-  DaysNumber
+  DaysNumber,
+  getCardsIsWatched,
+  getCardsForPeriod
 } from "../utils/statistics";
 
 const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
   const BAR_HEIGHT = 50;
   statisticCtx.height = BAR_HEIGHT * 5;
 
-  const getCardsForPeriod = (card, dateA, dateB) => {
-    return card.isWatched && card.watching >= dateA && card.watching <= dateB;
-  };
-  const filtredCards = cards.filter((card) => getCardsForPeriod(card, dateFrom, dateTo));
+  let filtredCards;
+  if (dateFrom === null) {
+    filtredCards = cards.filter((card) => getCardsIsWatched(card));
+  } else {
+    filtredCards = cards.filter((card) => getCardsForPeriod(card, dateFrom, dateTo));
+  }
 
   const totalGenres = filtredCards.map((filtredCard) => filtredCard.genres);
   const mergedTotalGenres = [].concat(...totalGenres);
@@ -94,10 +98,12 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
 const createStatisticsTemplate = (data) => {
   const {cards, dateFrom, dateTo, currentPeriod} = data;
 
-  const getCardsForPeriod = (card, dateA, dateB) => {
-    return card.isWatched && card.watching >= dateA && card.watching <= dateB;
-  };
-  const filtredCards = cards.filter((card) => getCardsForPeriod(card, dateFrom, dateTo));
+  let filtredCards;
+  if (dateFrom === null) {
+    filtredCards = cards.filter((card) => getCardsIsWatched(card));
+  } else {
+    filtredCards = cards.filter((card) => getCardsForPeriod(card, dateFrom, dateTo));
+  }
 
   const totalGenres = filtredCards.map((filtredCard) => filtredCard.genres);
   const mergedTotalGenres = [].concat(...totalGenres);
@@ -166,11 +172,7 @@ export default class Statistics extends Smart {
 
     this._data = {
       cards,
-      // По условиям техзадания по умолчанию интервал - за все время
-      dateFrom: (() => {
-        const daysPeriod = 1000;
-        return dayjs().subtract(daysPeriod, `day`).toDate();
-      })(),
+      dateFrom: null,
       dateTo: dayjs().toDate(),
       currentPeriod: ``
     };
@@ -204,37 +206,27 @@ export default class Statistics extends Smart {
         const currentPeriod = evt.target.value;
         if (currentPeriod === Period.ALL_TIME) {
           this.updateData({
-            dateFrom: (() => {
-              return dayjs().subtract(DaysNumber.ALL_TIME, `day`).toDate();
-            })(),
+            dateFrom: null,
             currentPeriod: Period.ALL_TIME
           });
         } else if (currentPeriod === Period.TODAY) {
           this.updateData({
-            dateFrom: (() => {
-              return dayjs().subtract(DaysNumber.TODAY, `day`).toDate();
-            })(),
+            dateFrom: dayjs().subtract(DaysNumber.TODAY, `day`).toDate(),
             currentPeriod: Period.TODAY
           });
         } else if (currentPeriod === Period.WEEK) {
           this.updateData({
-            dateFrom: (() => {
-              return dayjs().subtract(DaysNumber.WEEK, `day`).toDate();
-            })(),
+            dateFrom: dayjs().subtract(DaysNumber.WEEK, `day`).toDate(),
             currentPeriod: Period.WEEK
           });
         } else if (currentPeriod === Period.MONTH) {
           this.updateData({
-            dateFrom: (() => {
-              return dayjs().subtract(DaysNumber.MONTH, `day`).toDate();
-            })(),
+            dateFrom: dayjs().subtract(DaysNumber.MONTH, `day`).toDate(),
             currentPeriod: Period.MONTH
           });
         } else if (currentPeriod === Period.YEAR) {
           this.updateData({
-            dateFrom: (() => {
-              return dayjs().subtract(DaysNumber.YEAR, `day`).toDate();
-            })(),
+            dateFrom: dayjs().subtract(DaysNumber.YEAR, `day`).toDate(),
             currentPeriod: Period.YEAR
           });
         }

@@ -2,10 +2,7 @@ import Smart from "./smart.js";
 import dayjs from "dayjs";
 import he from "he";
 import {generateId} from "../mock/cards.js";
-// eslint-disable-next-line quotes
-// eslint-disable-next-line no-undef
-const relativeTime = require(`dayjs/plugin/relativeTime`);
-dayjs.extend(relativeTime);
+import {SpecialName} from "../utils.js";
 
 const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
@@ -14,16 +11,16 @@ const getTimeFromMins = (mins) => {
 };
 
 const createGenresTemplate = (genres) => {
-  return genres.map((genre) => ` <span class="film-details__genre">${genre}</span>`).join(``);
+  return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 };
 
 const setConnectLength = (comment) => {
-  if (comment.length > 139) {
-    return comment.slice(0, 139) + `...`;
-  } else {
-    return comment;
-  }
+  return comment.length > SpecialName.SYMBOLS_COUNT ? comment.slice(0, SpecialName.SYMBOLS_COUNT) + `...` : comment;
 };
+
+// eslint-disable-next-line no-undef
+const relativeTime = require(`dayjs/plugin/relativeTime`);
+dayjs.extend(relativeTime);
 
 const createCommentsTemplate = (comments) => {
   return comments.map((comment) => `<li class="film-details__comment">

@@ -29,6 +29,14 @@ export const DaysNumber = {
   TODAY: 1,
   WEEK: 7,
   MONTH: 30,
-  YEAR: 365,
-  ALL_TIME: 1000
+  YEAR: 365
 };
+
+export const getCardsIsWatched = (card) => {
+  return card.isWatched;
+};
+
+export const getCardsForPeriod = (card, dateA, dateB) => {
+  return card.isWatched && card.watching >= dateA && card.watching <= dateB;
+};
+

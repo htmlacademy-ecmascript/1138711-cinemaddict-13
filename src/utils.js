@@ -1,6 +1,21 @@
 import AbstractView from "./view/abstract.js";
 import dayjs from "dayjs";
 
+export const SpecialName = {
+  SYMBOLS_COUNT: 139,
+  ONE: 1,
+  TEN: 10,
+  ELEVEN: 11,
+  TWENTY: 20,
+  TWENTY_ONE: 21
+};
+
+export const Rank = {
+  NOVICE: `novice`,
+  FAN: `fan`,
+  MOVIE_BUFF: `movie buff`
+};
+
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,

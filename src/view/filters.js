@@ -60,13 +60,13 @@ export default class Filters extends AbstractView {
     const menuItem = evt.target.dataset.menuItem;
     this._callback.menuClick(menuItem);
     const mainNavigationActive = document.querySelector(`.main-navigation__item.main-navigation__item--active`);
-    const mainNavigationActiveItem = document.querySelector(`.main-navigation__item`);
     const statistics = document.querySelector(`.main-navigation__additional`);
     if (menuItem === MenuItem.STATISTICS) {
       mainNavigationActive.classList.remove(`main-navigation__item--active`);
       statistics.classList.add(`main-navigation__additional--active`);
     } else if (menuItem === MenuItem.CARDS) {
       statistics.classList.remove(`main-navigation__additional--active`);
+      const mainNavigationActiveItem = document.querySelector(`.main-navigation__item`);
       mainNavigationActiveItem.classList.add(`main-navigation__item--active`);
     }
   }

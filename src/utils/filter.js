@@ -1,7 +1,7 @@
 import {FilterType} from "../utils";
 
 export const filter = {
-  [FilterType.ALL]: (cards) => cards.filter((card) => !card.isDeleted),
+  [FilterType.ALL]: (cards) => cards.filter((card) => !card.all),
   [FilterType.WATCHLIST]: (cards) => cards.filter((card) => card.isAddToWatchList),
   [FilterType.WATCHED]: (cards) => cards.filter((card) => card.isWatched),
   [FilterType.FAVORITES]: (cards) => cards.filter((card) => card.isFavorite)

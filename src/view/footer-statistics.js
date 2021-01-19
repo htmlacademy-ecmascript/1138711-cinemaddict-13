@@ -1,8 +1,7 @@
 import AbstractView from "./abstract.js";
 
 const createFooterStatisticsTemplate = (cards) => {
-  const {date} = cards;
-  return `<p>${date} movies inside</p>`;
+  return `<p>${cards} movies inside</p>`;
 };
 
 export default class FooterStatistics extends AbstractView {
@@ -12,6 +11,6 @@ export default class FooterStatistics extends AbstractView {
   }
 
   getTemplate() {
-    return createFooterStatisticsTemplate(this._cards[0]);
+    return createFooterStatisticsTemplate(this._cards);
   }
 }

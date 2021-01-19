@@ -1,4 +1,3 @@
-import ProfileContent from "../view/profile.js";
 import SortContent from "../view/sort.js";
 import FilmsContent from "../view/films.js";
 import FilmCard from "../view/film-card.js";
@@ -7,14 +6,13 @@ import ShowMoreBtn from "../view/show-more-btn.js";
 import FilmListRated from "../view/film-list-rated.js";
 import FilmListCommented from "../view/film-list-commented.js";
 import {render, RenderPosition, remove, SortType, sortCardUp, sortCardRating, UserAction, UpdateType} from "../utils.js";
-import CardPresenter from "./card.js";
-import FilmDetailsPresenter from "./filmDetails.js";
+import CardPresenter from "./card-presenter.js";
+import FilmDetailsPresenter from "./filmDetails-presenter.js";
 import {filter} from "../utils/filter.js";
 
 const CARD_COUNT_PER_STEP = 5;
 const CARD_COUNT_EXTRA = 2;
 const siteMainElement = document.querySelector(`.main`);
-const siteHeader = document.querySelector(`.header`);
 const siteFooter = document.querySelector(`.footer`);
 
 export default class MoviePresenter {
@@ -24,13 +22,10 @@ export default class MoviePresenter {
 
     this._movieContainer = movieContainer;
     this._renderedCardCount = CARD_COUNT_PER_STEP;
-
     this._renderedCardCountExtra = CARD_COUNT_EXTRA;
     this._cardPresenter = {};
-    this._currentPopUp = {};
-
+    this._currentPopUp = null;
     this._currentSortType = SortType.DEFAULT;
-
     this._sortComponent = null;
     this._loadMoreButtonComponent = null;
 
@@ -40,22 +35,35 @@ export default class MoviePresenter {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
+    this._filmsClickHandler = this._filmsClickHandler.bind(this);
 
     this._movieListRated = new FilmListRated();
     this._movieListCommented = new FilmListCommented();
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
     this._cardsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
-    render(siteHeader, new ProfileContent(), RenderPosition.BEFOREEND);
     this._renderMovies();
+
+    this._cardsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
-  _getSortedCards() {
+  destroy() {
+    this._clearMovies({resetRenderedCardCount: true, resetSortType: true});
+
+    remove(this._movieList);
+    remove(this._movieListRated);
+    remove(this._movieListCommented);
+
+    this._cardsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  _getFiltredCards() {
     const filterType = this._filterModel.getFilter();
     const cards = this._cardsModel.getCards();
     const filtredCards = filter[filterType](cards);
@@ -137,9 +145,9 @@ export default class MoviePresenter {
   }
 
   _handleLoadMoreButtonClick() {
-    const cardCount = this._getSortedCards().length;
+    const cardCount = this._getFiltredCards().length;
     const newRenderedCardCount = Math.min(cardCount, this._renderedCardCount + CARD_COUNT_PER_STEP);
-    const cards = this._getSortedCards().slice(this._renderedCardCount, newRenderedCardCount);
+    const cards = this._getFiltredCards().slice(this._renderedCardCount, newRenderedCardCount);
 
     this._renderCards(cards);
     this._renderedCardCount = newRenderedCardCount;
@@ -208,31 +216,32 @@ export default class MoviePresenter {
     this._renderExtraCardsCommented();
   }
 
-  _renderFilmDetails() {
-    const body = document.querySelector(`body`);
-    const films = siteMainElement.querySelector(`.films`);
+  _filmsClickHandler(evt) {
+    if (evt.target.tagName === `H3` || evt.target.tagName === `IMG` || evt.target.tagName === `A`) {
+      const cardID = evt.target.id;
+      const currentCard = this._getFiltredCards().find((card) => card.id === cardID);
 
-    films.addEventListener(`click`, (evt) => {
-      if (evt.target.tagName === `H3` || evt.target.tagName === `IMG` || evt.target.tagName === `A`) {
-        const cardID = evt.target.id;
-        const currentCard = this._getSortedCards().find((card) => card.id === cardID);
-
-        const oldPopUp = document.querySelector(`.film-details`);
-        if (oldPopUp) {
-          oldPopUp.remove();
-        }
-
-        const filmDetailsPresenter = new FilmDetailsPresenter(siteFooter, this._handleViewAction);
-        this._filmDetailsPresenter = filmDetailsPresenter;
-        filmDetailsPresenter.init(currentCard);
-        this._currentPopUp = currentCard;
-        body.classList.add(`hide-overflow`);
+      const oldPopUp = document.querySelector(`.film-details`);
+      if (oldPopUp) {
+        oldPopUp.remove();
       }
-    });
+
+      const filmDetailsPresenter = new FilmDetailsPresenter(siteFooter, this._handleViewAction);
+      this._filmDetailsPresenter = filmDetailsPresenter;
+      filmDetailsPresenter.init(currentCard);
+      this._currentPopUp = currentCard;
+      const body = document.querySelector(`body`);
+      body.classList.add(`hide-overflow`);
+    }
+  }
+
+  _renderFilmDetails() {
+    const films = siteMainElement.querySelector(`.films`);
+    films.addEventListener(`click`, this._filmsClickHandler);
   }
 
   _clearMovies({resetRenderedCardCount = false, resetSortType = false} = {}) {
-    const cardCount = this._getSortedCards().length;
+    const cardCount = this._getFiltredCards().length;
 
     Object
       .values(this._cardPresenter)
@@ -243,19 +252,19 @@ export default class MoviePresenter {
     remove(this._noMovieCard);
     remove(this._loadMoreButtonComponent);
 
-    if (resetRenderedCardCount) {
-      this._renderedCardCount = CARD_COUNT_PER_STEP;
-    } else {
-      this._renderedCardCount = Math.min(cardCount, this._renderedCardCount);
-    }
+    // eslint-disable-next-line no-unused-expressions
+    resetRenderedCardCount
+      ? this._renderedCardCount = CARD_COUNT_PER_STEP
+      : this._renderedCardCount = Math.min(cardCount, this._renderedCardCount);
 
-    if (resetSortType) {
-      this._currentSortType = SortType.DEFAULT;
-    }
+    // eslint-disable-next-line no-unused-expressions
+    resetSortType
+      ? this._currentSortType = SortType.DEFAULT
+      : ` `;
   }
 
   _renderMovies() {
-    const cards = this._getSortedCards();
+    const cards = this._getFiltredCards();
     const cardCount = cards.length;
 
     if (this._filmDetailsPresenter) {

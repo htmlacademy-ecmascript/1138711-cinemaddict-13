@@ -35,7 +35,6 @@ export default class Cards extends Observer {
     const index = this._cards.findIndex((card) => card.id === update.id);
 
     this._cards[index].comments = [
-      update,
       ...this._cards[index].comments
     ];
 

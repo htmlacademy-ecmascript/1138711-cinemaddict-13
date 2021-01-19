@@ -37,7 +37,7 @@ export default class FilmDetailsPresenter {
     this._filmDetailsComponent.setClickHandler(this._closeFilmDetails);
     document.addEventListener(`keydown`, this._onEscKeyDown);
 
-    if (prevfilmDetailsComponent === null) {
+    if (!prevfilmDetailsComponent) {
       render(this._filmDetailsContainer, this._filmDetailsComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -61,26 +61,6 @@ export default class FilmDetailsPresenter {
     remove(this._filmDetailsComponent);
     body.classList.remove(`hide-overflow`);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-
-    const films = document.querySelector(`.films`);
-    const siteFooter = document.querySelector(`.footer`);
-    films.removeEventListener(`click`, (evt) => {
-      if (evt.target.tagName === `H3` || evt.target.tagName === `IMG` || evt.target.tagName === `A`) {
-        const cardID = evt.target.id;
-        const currentCard = this._getSortedCards().find((card) => card.id === cardID);
-
-        const oldPopUp = document.querySelector(`.film-details`);
-        if (oldPopUp) {
-          oldPopUp.remove();
-        }
-
-        const filmDetailsPresenter = new FilmDetailsPresenter(siteFooter, this._handleViewAction);
-        this._filmDetailsPresenter = filmDetailsPresenter;
-        filmDetailsPresenter.init(currentCard);
-        this._currentPopUp = currentCard;
-        body.classList.add(`hide-overflow`);
-      }
-    });
   }
 
   _onEscKeyDown(evt) {
@@ -125,10 +105,10 @@ export default class FilmDetailsPresenter {
     );
   }
 
-  _handleDeleteCommentClick(commentsCopy) {
+  _handleDeleteCommentClick(commentsCopies) {
     const card = Object.assign(this._card,
         {
-          comments: commentsCopy
+          comments: commentsCopies
         });
     this._changeData(
         UserAction.DELETE_COMMENT,
@@ -137,10 +117,10 @@ export default class FilmDetailsPresenter {
     );
   }
 
-  _handleAddCommentClick(commentsCopy) {
+  _handleAddCommentClick(commentsCopies) {
     const card = Object.assign(this._card,
         {
-          comments: commentsCopy
+          comments: commentsCopies
         });
     this._changeData(
         UserAction.DELETE_COMMENT,

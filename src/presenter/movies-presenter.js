@@ -2,21 +2,21 @@ import SortContent from "../view/sort.js";
 import FilmsContent from "../view/films.js";
 import FilmCard from "../view/film-card.js";
 import NoCard from "../view/no-film-card.js";
+import Loading from "../view/loading.js";
 import ShowMoreBtn from "../view/show-more-btn.js";
 import FilmListRated from "../view/film-list-rated.js";
 import FilmListCommented from "../view/film-list-commented.js";
-import {render, RenderPosition, remove, SortType, sortCardUp, sortCardRating, UserAction, UpdateType} from "../utils.js";
 import CardPresenter from "./card-presenter.js";
 import FilmDetailsPresenter from "./filmDetails-presenter.js";
 import {filter} from "../utils/filter.js";
+import {render, RenderPosition, remove, SortType, sortCardUp, sortCardRating, UserAction, UpdateType} from "../utils.js";
 
 const CARD_COUNT_PER_STEP = 5;
 const CARD_COUNT_EXTRA = 2;
 const siteMainElement = document.querySelector(`.main`);
-const siteFooter = document.querySelector(`.footer`);
 
 export default class MoviePresenter {
-  constructor(movieContainer, cardsModel, filterModel) {
+  constructor(movieContainer, cardsModel, filterModel, api) {
     this._cardsModel = cardsModel;
     this._filterModel = filterModel;
 
@@ -26,26 +26,28 @@ export default class MoviePresenter {
     this._cardPresenter = {};
     this._currentPopUp = null;
     this._currentSortType = SortType.DEFAULT;
+    this._isLoading = true;
+    this._api = api;
+
     this._sortComponent = null;
     this._loadMoreButtonComponent = null;
 
     this._movieList = new FilmsContent();
+    this._loadingComponent = new Loading();
     this._noMovieCard = new NoCard();
-
-    this._handleViewAction = this._handleViewAction.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
-    this._filmsClickHandler = this._filmsClickHandler.bind(this);
-
     this._movieListRated = new FilmListRated();
     this._movieListCommented = new FilmListCommented();
 
+    this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._cardsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._filmsClickHandler = this._filmsClickHandler.bind(this);
+
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
   }
 
   init() {
+    this._renderFilmsList();
     this._renderMovies();
 
     this._cardsModel.addObserver(this._handleModelEvent);
@@ -80,7 +82,10 @@ export default class MoviePresenter {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
-        this._cardsModel.updateCard(updateType, update);
+        // this._cardsModel.updateCard(updateType, update);
+        this._api.updateCard(update).then((response) => {
+          this._cardsModel.updateCard(updateType, response);
+        });
         break;
       case UserAction.ADD_COMMENT:
         this._cardsModel.addComment(updateType, update);
@@ -104,6 +109,11 @@ export default class MoviePresenter {
         this._clearMovies({resetRenderedCardCount: true, resetSortType: true});
         this._renderMovies();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderMovies();
+        break;
     }
   }
 
@@ -111,8 +121,8 @@ export default class MoviePresenter {
     if (this._currentSortType === sortType) {
       return;
     }
-
     this._currentSortType = sortType;
+
     this._clearMovies({resetRenderedCardCount: true});
     this._renderMovies();
   }
@@ -124,18 +134,27 @@ export default class MoviePresenter {
 
     this._sortComponent = new SortContent(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-
     render(siteMainElement, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
+  _renderFilmsList() {
+    render(siteMainElement, this._movieList, RenderPosition.BEFOREEND);
+  }
+
   _renderCard(card) {
-    const cardPresenter = new CardPresenter(this._movieList, this._handleViewAction);
+    const filmsList = siteMainElement.querySelector(`.films-list`);
+    const cardPresenter = new CardPresenter(filmsList, this._handleViewAction);
     cardPresenter.init(card);
     this._cardPresenter[card.id] = cardPresenter;
   }
 
   _renderCards(cards) {
     cards.forEach((card) => this._renderCard(card));
+  }
+
+  _renderLoading() {
+    const filmsList = siteMainElement.querySelector(`.films-list`);
+    render(filmsList, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderNoCards() {
@@ -226,6 +245,7 @@ export default class MoviePresenter {
         oldPopUp.remove();
       }
 
+      const siteFooter = document.querySelector(`.footer`);
       const filmDetailsPresenter = new FilmDetailsPresenter(siteFooter, this._handleViewAction);
       this._filmDetailsPresenter = filmDetailsPresenter;
       filmDetailsPresenter.init(currentCard);
@@ -249,6 +269,7 @@ export default class MoviePresenter {
     this._cardPresenter = {};
 
     remove(this._sortComponent);
+    remove(this._loadingComponent);
     remove(this._noMovieCard);
     remove(this._loadMoreButtonComponent);
 
@@ -264,6 +285,11 @@ export default class MoviePresenter {
   }
 
   _renderMovies() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const cards = this._getFiltredCards();
     const cardCount = cards.length;
 
@@ -275,14 +301,17 @@ export default class MoviePresenter {
       this._renderNoCards();
       return;
     }
-    this._renderSort();
-    render(this._movieContainer, this._movieList, RenderPosition.BEFOREEND);
 
+    remove(this._sortComponent);
+    this._renderSort();
+
+    this._renderFilmsList();
     this._renderCards(cards.slice(0, Math.min(cardCount, this._renderedCardCount)));
 
     if (cardCount > this._renderedCardCount) {
       this._renderLoadMoreButton();
     }
+
     // this._renderFilmListRated();
     // this._renderFilmListCommented();
 

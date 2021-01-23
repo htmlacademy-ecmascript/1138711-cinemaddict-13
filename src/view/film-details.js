@@ -23,6 +23,7 @@ const relativeTime = require(`dayjs/plugin/relativeTime`);
 dayjs.extend(relativeTime);
 
 const createCommentsTemplate = (comments) => {
+
   return comments.map((comment) => `<li class="film-details__comment">
   <span class="film-details__comment-emoji">
     <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-smile">
@@ -48,7 +49,7 @@ const createEmotionsTemplate = (comments, currentEmoji) => {
 
 const createFilmDetailsTemplate = (data) => {
 
-  const {actors, ageRating, comments, country, description, director, duration, genres, original, poster, rating, realize,
+  const {actors, ageRating, comments, country, description, director, duration, genres, original, poster, rating, date,
     writers, title, isAddToWatchList, isWatched, isFavorite, currentEmoji} = data;
 
   const currentGenres = createGenresTemplate(genres);
@@ -97,7 +98,7 @@ const createFilmDetailsTemplate = (data) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${realize}</td>
+              <td class="film-details__cell">${dayjs(date).format(`DD MMM YYYY`)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>

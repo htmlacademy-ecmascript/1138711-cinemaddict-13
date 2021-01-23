@@ -28,7 +28,7 @@ const createFilmCardTemplate = (card) => {
   <p class="film-card__info">
     <span class="film-card__year">${dayjs(date).format(`DD MMM YYYY`)}</span>
     <span class="film-card__duration">${getTimeFromMins(duration)}</span>
-    <span class="film-card__genre">${genres}</span>
+    <span class="film-card__genre">${genres[0]}</span>
   </p>
   <img src="${poster}" alt="" class="film-card__poster" id="${id}">
   <p class="film-card__description">${description}</p>

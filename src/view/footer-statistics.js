@@ -7,7 +7,7 @@ const createFooterStatisticsTemplate = (cards) => {
 export default class FooterStatistics extends AbstractView {
   constructor(cards) {
     super();
-    this._cards = cards;
+    this._cards = cards.length;
   }
 
   getTemplate() {

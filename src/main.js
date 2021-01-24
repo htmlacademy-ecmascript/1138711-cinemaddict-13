@@ -20,7 +20,6 @@ const cardsModel = new CardsModel();
 
 const siteHeader = document.querySelector(`.header`);
 const profilePresenter = new ProfilePresenter(siteHeader, cardsModel);
-profilePresenter.init();
 
 let statisticsComponent = null;
 const siteMainElement = document.querySelector(`.main`);
@@ -52,7 +51,6 @@ moviePresenter.init();
 
 const siteFooter = document.querySelector(`.footer`);
 const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
-render(footerStatistics, new FooterStatistics(), RenderPosition.AFTERBEGIN);
 
 api.getCards()
   .then((cards) => {
@@ -67,8 +65,12 @@ api.getCards()
   })
   .then((cards) => {
     cardsModel.setCards(UpdateType.INIT, cards);
+    profilePresenter.init();
+    render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
   })
   .catch(() => {
     cardsModel.setCards(UpdateType.INIT, []);
+    profilePresenter.init();
+    render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
   });
 

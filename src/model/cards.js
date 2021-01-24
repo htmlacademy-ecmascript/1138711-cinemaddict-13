@@ -65,6 +65,7 @@ export default class Cards extends Observer {
         card,
         {
           id: card.id,
+          comments: card.comments,
           poster: card.film_info.poster,
           title: card.film_info.alternative_title,
           original: card.film_info.title,
@@ -77,7 +78,6 @@ export default class Cards extends Observer {
           country: card.film_info.release.release_country,
           genres: card.film_info.genre,
           ageRating: card.film_info.age_rating,
-          comments: card.comments,
           description: card.film_info.description,
           isAddToWatchList: card.user_details.watchlist,
           isFavorite: card.user_details.favorite,
@@ -99,7 +99,7 @@ export default class Cards extends Observer {
         card,
         {
           "id": card.id,
-          "comments": card.comments,
+          "comments": card.comments.map((comment) => comment.id),
           "film_info": {
             "title": card.original,
             "alternative_title": card.title,
@@ -131,13 +131,27 @@ export default class Cards extends Observer {
     delete adaptedCard.isFavorite;
     delete adaptedCard.isWatched;
     delete adaptedCard.watching;
+    delete adaptedCard.writers;
+    delete adaptedCard.description;
+    delete adaptedCard.genres;
+    delete adaptedCard.original;
+    delete adaptedCard.title;
+    delete adaptedCard.rating;
+    delete adaptedCard.poster;
+    delete adaptedCard.duration;
+    delete adaptedCard.director;
+    delete adaptedCard.date;
+    delete adaptedCard.country;
+    delete adaptedCard.ageRating;
+    delete adaptedCard.actors;
 
+    console.log(adaptedCard);
     return adaptedCard;
   }
 
 
   static adaptCommentToClient(comment) {
-    const adaptedCard = Object.assign(
+    const adaptedComment = Object.assign(
         {},
         comment,
         {
@@ -149,23 +163,26 @@ export default class Cards extends Observer {
         }
     );
 
-    return adaptedCard;
+    return adaptedComment;
   }
 
-  static adaptCommentToServer(comment) {
-    const adaptedCard = Object.assign(
-        {},
-        comment,
-        {
-          "id": comment.id,
-          "author": comment.author,
-          "comment": comment.comment,
-          "date": comment.date,
-          "emotion": comment.emotion
-        }
-    );
+  // static adaptCommentToServer(comment) {
+  //   const adaptedComment = Object.assign(
+  //       {},
+  //       comment,
+  //       {
+  //         comment
+  //       }
+  //   );
 
-    return adaptedCard;
-  }
+  //   delete adaptedComment.author;
+  //   delete adaptedComment.comment;
+  //   delete adaptedComment.date;
+  //   delete adaptedComment.emotion;
+  //   delete adaptedComment.text;
+  //   delete adaptedComment.id;
+
+  //   return adaptedComment;
+  // }
 }
 

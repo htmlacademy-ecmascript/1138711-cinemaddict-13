@@ -209,16 +209,6 @@ export default class Statistics extends Smart {
             dateFrom: null,
             currentPeriod: Period.ALL_TIME
           });
-        } else if (currentPeriod === Period.TODAY) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.TODAY, `day`).toDate(),
-            currentPeriod: Period.TODAY
-          });
-        } else if (currentPeriod === Period.WEEK) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.WEEK, `day`).toDate(),
-            currentPeriod: Period.WEEK
-          });
         } else if (currentPeriod === Period.MONTH) {
           this.updateData({
             dateFrom: dayjs().subtract(DaysNumber.MONTH, `day`).toDate(),
@@ -228,6 +218,16 @@ export default class Statistics extends Smart {
           this.updateData({
             dateFrom: dayjs().subtract(DaysNumber.YEAR, `day`).toDate(),
             currentPeriod: Period.YEAR
+          });
+        } else if (currentPeriod === Period.TODAY) {
+          this.updateData({
+            dateFrom: dayjs().subtract(DaysNumber.TODAY, `day`).toDate(),
+            currentPeriod: Period.TODAY
+          });
+        } else if (currentPeriod === Period.WEEK) {
+          this.updateData({
+            dateFrom: dayjs().subtract(DaysNumber.WEEK, `day`).toDate(),
+            currentPeriod: Period.WEEK
           });
         }
       }

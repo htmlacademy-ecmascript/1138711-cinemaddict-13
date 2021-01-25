@@ -165,6 +165,7 @@ export default class FilmDetails extends Smart {
   constructor(card) {
     super();
     this._data = card;
+    console.log(this._data);
 
     this._data.currentEmoji = `smile`;
     this._data.currentComment = ``;

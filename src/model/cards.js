@@ -66,6 +66,7 @@ export default class Cards extends Observer {
         {
           id: card.id,
           comments: card.comments,
+          commentsIds: card.comments,
           poster: card.film_info.poster,
           title: card.film_info.alternative_title,
           original: card.film_info.title,
@@ -99,7 +100,7 @@ export default class Cards extends Observer {
         card,
         {
           "id": card.id,
-          "comments": card.comments.map((comment) => comment.id),
+          "comments": card.commentsIds,
           "film_info": {
             "title": card.original,
             "alternative_title": card.title,
@@ -144,8 +145,8 @@ export default class Cards extends Observer {
     delete adaptedCard.country;
     delete adaptedCard.ageRating;
     delete adaptedCard.actors;
+    delete adaptedCard.commentsIds;
 
-    console.log(adaptedCard);
     return adaptedCard;
   }
 
@@ -165,24 +166,5 @@ export default class Cards extends Observer {
 
     return adaptedComment;
   }
-
-  // static adaptCommentToServer(comment) {
-  //   const adaptedComment = Object.assign(
-  //       {},
-  //       comment,
-  //       {
-  //         comment
-  //       }
-  //   );
-
-  //   delete adaptedComment.author;
-  //   delete adaptedComment.comment;
-  //   delete adaptedComment.date;
-  //   delete adaptedComment.emotion;
-  //   delete adaptedComment.text;
-  //   delete adaptedComment.id;
-
-  //   return adaptedComment;
-  // }
 }
 

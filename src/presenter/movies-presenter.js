@@ -82,7 +82,6 @@ export default class MoviePresenter {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
-        // this._cardsModel.updateCard(updateType, update);
         this._api.updateCard(update).then((response) => {
           this._cardsModel.updateCard(updateType, response);
         });

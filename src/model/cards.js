@@ -65,7 +65,6 @@ export default class Cards extends Observer {
         card,
         {
           id: card.id,
-          comments: card.comments,
           commentsIds: card.comments,
           poster: card.film_info.poster,
           title: card.film_info.alternative_title,
@@ -90,6 +89,7 @@ export default class Cards extends Observer {
     // Ненужные ключи мы удаляем
     delete adaptedCard.film_info;
     delete adaptedCard.user_details;
+    delete adaptedCard.comments;
 
     return adaptedCard;
   }
@@ -145,7 +145,6 @@ export default class Cards extends Observer {
     delete adaptedCard.country;
     delete adaptedCard.ageRating;
     delete adaptedCard.actors;
-    delete adaptedCard.commentsIds;
 
     return adaptedCard;
   }

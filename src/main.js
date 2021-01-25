@@ -54,16 +54,25 @@ const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
 
 api.getCards()
   .then((cards) => {
-    cards.map((card) => api.getComments(card)
+    return Promise.all(cards.map((card) => api.getComments(card)
       .then((comments) => {
-        cards.forEach((element) => {
-          card.comments = comments;
-        });
+        card.comments = comments;
+        return card;
       })
-    );
-    return cards;
+    ));
   })
+  // .then((cards) => {
+  //   cards.map((card) => api.getComments(card)
+  //     .then((comments) => {
+  //       cards.forEach((element) => {
+  //         card.comments = comments;
+  //       });
+  //     })
+  //   );
+  //   return cards;
+  // })
   .then((cards) => {
+    console.log(cards);
     cardsModel.setCards(UpdateType.INIT, cards);
     profilePresenter.init();
     render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);

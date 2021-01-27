@@ -3,6 +3,14 @@ import {render, RenderPosition, replace, remove, UserAction, UpdateType} from ".
 
 const body = document.querySelector(`body`);
 
+export const State = {
+  BLOCKED: `BLOCKED`,
+  UNBLOCKED: `UNBLOCKED`,
+  DELETING: `DELETING`,
+  DELETED: `DELETED`,
+  ABORTING: `ABORTING`
+};
+
 export default class FilmDetailsPresenter {
   constructor(filmDetailsContainer, changeData) {
 
@@ -105,10 +113,23 @@ export default class FilmDetailsPresenter {
     );
   }
 
-  _handleDeleteCommentClick(commentsCopies) {
+  _handleAddCommentClick(commentsCopies) {
     const card = Object.assign(this._card,
         {
           comments: commentsCopies
+        });
+    this._changeData(
+        UserAction.ADD_COMMENT,
+        UpdateType.MINOR,
+        card
+    );
+  }
+
+  _handleDeleteCommentClick(commentsCopies, commentId) {
+    const card = Object.assign(this._card,
+        {
+          comments: commentsCopies,
+          deleteCommentId: commentId
         });
     this._changeData(
         UserAction.DELETE_COMMENT,
@@ -117,15 +138,59 @@ export default class FilmDetailsPresenter {
     );
   }
 
-  _handleAddCommentClick(commentsCopies) {
-    const card = Object.assign(this._card,
-        {
-          comments: commentsCopies
+  setStateForm(state) {
+    const resetFormState = () => {
+      this._filmDetailsComponent.updateData({
+        isBlocked: false,
+      });
+    };
+
+    switch (state) {
+      case State.BLOCKED:
+        this._filmDetailsComponent.updateData({
+          isBlocked: true
         });
-    this._changeData(
-        UserAction.DELETE_COMMENT,
-        UpdateType.MINOR,
-        card
-    );
+        break;
+      case State.UNBLOCKED:
+        this._filmDetailsComponent.updateData({
+          isBlocked: false
+        });
+        break;
+      case State.ABORTING:
+        this._filmDetailsComponent.shake(resetFormState);
+        break;
+    }
+  }
+
+  setStateButton(state) {
+    // const deletingBtnId = this._card.deleteCommentId;
+    // const deleteBtn = document.getElementById(deletingBtnId);
+    // console.log(this._card);
+    // console.log(deleteBtn);
+
+    const resetFormState = () => {
+      this._filmDetailsComponent.updateData({
+        isDisabled: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.DELETING:
+        this._filmDetailsComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.DELETED:
+        this._filmDetailsComponent.updateData({
+          isDisabled: false,
+          isDeleting: false
+        });
+        break;
+      case State.ABORTING:
+        this._filmDetailsComponent.shake(resetFormState);
+        break;
+    }
   }
 }

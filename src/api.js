@@ -2,7 +2,9 @@ import Cards from "./model/cards.js";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -22,8 +24,8 @@ export default class Api {
       .then((cards) => cards.map(Cards.adaptToClient));
   }
 
-  getComments(film) {
-    return this._load({url: `comments/${film.id}`})
+  getComments(card) {
+    return this._load({url: `comments/${card.id}`})
       .then(Api.toJSON)
       .then((comments) => comments.map(Cards.adaptCommentToClient));
   }
@@ -37,6 +39,27 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(Cards.adaptToClient);
+  }
+
+  addComment(card) {
+    const comments = card.comments;
+    const lastComment = comments[comments.length - 1];
+    return this._load({
+      url: `comments/${card.id}`,
+      method: Method.POST,
+      body: JSON.stringify(Cards.adaptCommentToServer(lastComment)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then(Cards.adaptCommentToClient);
+  }
+
+  deleteComment(card) {
+    const deleteComment = card.deleteCommentId;
+    return this._load({
+      url: `comments/${deleteComment}`,
+      method: Method.DELETE
+    });
   }
 
   _load({

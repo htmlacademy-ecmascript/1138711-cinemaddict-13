@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-nested-callbacks */
 import Statistics from "./view/statistics.js";
 import FooterStatistics from "./view/footer-statistics.js";
 import {MenuItem, render, RenderPosition, remove, UpdateType, FilterType} from "./utils.js";
@@ -61,18 +59,7 @@ api.getCards()
       })
     ));
   })
-  // .then((cards) => {
-  //   cards.map((card) => api.getComments(card)
-  //     .then((comments) => {
-  //       cards.forEach((element) => {
-  //         card.comments = comments;
-  //       });
-  //     })
-  //   );
-  //   return cards;
-  // })
   .then((cards) => {
-    console.log(cards);
     cardsModel.setCards(UpdateType.INIT, cards);
     profilePresenter.init();
     render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
@@ -82,4 +69,5 @@ api.getCards()
     profilePresenter.init();
     render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
   });
+
 

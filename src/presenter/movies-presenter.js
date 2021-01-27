@@ -7,7 +7,7 @@ import ShowMoreBtn from "../view/show-more-btn.js";
 import FilmListRated from "../view/film-list-rated.js";
 import FilmListCommented from "../view/film-list-commented.js";
 import CardPresenter from "./card-presenter.js";
-import FilmDetailsPresenter from "./filmDetails-presenter.js";
+import FilmDetailsPresenter, {State as FilmDetailsPresenterViewState} from "./filmDetails-presenter.js";
 import {filter} from "../utils/filter.js";
 import {render, RenderPosition, remove, SortType, sortCardUp, sortCardRating, UserAction, UpdateType} from "../utils.js";
 
@@ -87,10 +87,24 @@ export default class MoviePresenter {
         });
         break;
       case UserAction.ADD_COMMENT:
-        this._cardsModel.addComment(updateType, update);
+        this._filmDetailsPresenter.setStateForm(FilmDetailsPresenterViewState.BLOCKED);
+        this._api.addComment(update).then((response) => {
+          this._filmDetailsPresenter.setStateForm(FilmDetailsPresenterViewState.UNBLOCKED);
+          this._cardsModel.addComment(updateType, response);
+        })
+        .catch(() => {
+          this._filmDetailsPresenter.setStateForm(FilmDetailsPresenterViewState.ABORTING);
+        });
         break;
       case UserAction.DELETE_COMMENT:
-        this._cardsModel.deleteComment(updateType, update);
+        this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.DELETING);
+        this._api.deleteComment(update).then(() => {
+          this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.DELETED);
+          this._cardsModel.deleteComment(updateType, update);
+        })
+        .catch(() => {
+          this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.ABORTING);
+        });
         break;
     }
   }

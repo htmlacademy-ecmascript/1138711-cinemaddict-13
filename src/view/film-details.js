@@ -22,7 +22,7 @@ const setConnectLength = (comment) => {
 const relativeTime = require(`dayjs/plugin/relativeTime`);
 dayjs.extend(relativeTime);
 
-const createCommentsTemplate = (comments) => {
+const createCommentsTemplate = (comments, isDisabled, isDeleting) => {
 
   return comments.map((comment) => `<li class="film-details__comment">
   <span class="film-details__comment-emoji">
@@ -33,13 +33,16 @@ const createCommentsTemplate = (comments) => {
     <p class="film-details__comment-info">
       <span class="film-details__comment-author">${comment.author}</span>
       <span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>
-      <button  id="${comment.id}" class="film-details__comment-delete">Delete</button>
+      <button  id="${comment.id}" class="film-details__comment-delete" ${isDisabled ? `disabled` : ``}>
+        ${isDeleting ? `Deleting...` : `Delete`}
+      </button>
     </p>
   </div>
 </li>`).join(``);
 };
 
 const createEmotionsTemplate = (comments, currentEmoji) => {
+
   return comments.map((comment) => `<input class="film-details__emoji-item visually-hidden" name="emoji-${comment.emotion}"
   type="radio" id="emoji-${comment.emotion}" value="${comment.emotion}" ${currentEmoji === comment.emotion ? `checked` : ``} >
   <label class="film-details__emoji-label" for="emoji-${comment.emotion}">
@@ -50,11 +53,11 @@ const createEmotionsTemplate = (comments, currentEmoji) => {
 const createFilmDetailsTemplate = (data) => {
 
   const {actors, ageRating, comments, country, description, director, duration, genres, original, poster, rating, date,
-    writers, title, isAddToWatchList, isWatched, isFavorite, currentEmoji} = data;
+    writers, title, isAddToWatchList, isWatched, isFavorite, currentEmoji, isDisabled, isDeleting, isBlocked} = data;
 
   const currentGenres = createGenresTemplate(genres);
 
-  const currentComments = createCommentsTemplate(comments);
+  const currentComments = createCommentsTemplate(comments, isDisabled, isDeleting);
 
   const currentEmotions = createEmotionsTemplate(comments, currentEmoji);
 
@@ -147,7 +150,8 @@ const createFilmDetailsTemplate = (data) => {
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"
+            ${isBlocked ? `disabled` : ``}></textarea>
           </label>
 
           <div class="film-details__emoji-list">
@@ -165,10 +169,13 @@ export default class FilmDetails extends Smart {
   constructor(card) {
     super();
     this._data = card;
-    console.log(this._data);
 
     this._data.currentEmoji = `smile`;
     this._data.currentComment = ``;
+
+    this._data.isDisabled = false;
+    this._data.isDeleting = false;
+    this._data.isBlocked = false;
 
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
@@ -293,10 +300,10 @@ export default class FilmDetails extends Smart {
     const commentsCopy = this._data.comments.slice();
     const currentComment = commentsCopy.findIndex((comment) => comment.id === commentId);
     commentsCopy.splice(currentComment, 1);
+    this._callback.delete(commentsCopy, commentId);
     this.updateData({
-      comments: commentsCopy
+      comments: commentsCopy,
     });
-    this._callback.delete(commentsCopy);
   }
 
   setAddCommentHandler(callback) {
@@ -311,13 +318,14 @@ export default class FilmDetails extends Smart {
   _addCommentClickHandler(evt) {
     evt.preventDefault();
     const newComment = {};
-    const commentId = `id` + generateId();
+    const commentId = generateId();
     const commentEmotion = this._data.currentEmoji;
     const commentValue = he.encode(evt.target.value);
     newComment.id = commentId;
     newComment.emotion = commentEmotion;
     newComment.text = commentValue;
     newComment.author = `Young Yougn`;
+    newComment.date = dayjs().format();
     const commentsCopies = this._data.comments.slice();
     commentsCopies.push(newComment);
 

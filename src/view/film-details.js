@@ -1,7 +1,7 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
 import he from "he";
-import {generateId} from "../mock/cards.js";
+// import {generateId} from "../mock/cards.js";
 import {SpecialName} from "../utils.js";
 
 const getTimeFromMins = (mins) => {
@@ -318,10 +318,8 @@ export default class FilmDetails extends Smart {
   _addCommentClickHandler(evt) {
     evt.preventDefault();
     const newComment = {};
-    const commentId = generateId();
     const commentEmotion = this._data.currentEmoji;
     const commentValue = he.encode(evt.target.value);
-    newComment.id = commentId;
     newComment.emotion = commentEmotion;
     newComment.text = commentValue;
     newComment.author = `Young Yougn`;

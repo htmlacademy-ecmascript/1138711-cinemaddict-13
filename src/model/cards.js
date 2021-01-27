@@ -163,7 +163,6 @@ export default class Cards extends Observer {
           emotion: comment.emotion
         }
     );
-
     delete adaptedComment.comment;
 
     return adaptedComment;

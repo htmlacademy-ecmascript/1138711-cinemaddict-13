@@ -201,6 +201,14 @@ export default class Statistics extends Smart {
   }
 
   _setDateChange() {
+
+    let changePeriod = (DaysNumbers, Periods) => {
+      this.updateData({
+        dateFrom: dayjs().subtract(DaysNumbers, `day`).toDate(),
+        currentPeriod: Periods
+      });
+    };
+
     this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
         const currentPeriod = evt.target.value;
@@ -209,26 +217,14 @@ export default class Statistics extends Smart {
             dateFrom: null,
             currentPeriod: Period.ALL_TIME
           });
-        } else if (currentPeriod === Period.MONTH) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.MONTH, `day`).toDate(),
-            currentPeriod: Period.MONTH
-          });
-        } else if (currentPeriod === Period.YEAR) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.YEAR, `day`).toDate(),
-            currentPeriod: Period.YEAR
-          });
         } else if (currentPeriod === Period.TODAY) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.TODAY, `day`).toDate(),
-            currentPeriod: Period.TODAY
-          });
+          changePeriod(DaysNumber.TODAY, Period.TODAY);
         } else if (currentPeriod === Period.WEEK) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.WEEK, `day`).toDate(),
-            currentPeriod: Period.WEEK
-          });
+          changePeriod(DaysNumber.WEEK, Period.WEEK);
+        } else if (currentPeriod === Period.MONTH) {
+          changePeriod(DaysNumber.MONTH, Period.MONTH);
+        } else if (currentPeriod === Period.YEAR) {
+          changePeriod(DaysNumber.YEAR, Period.YEAR);
         }
       }
     });

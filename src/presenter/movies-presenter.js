@@ -98,7 +98,7 @@ export default class MoviePresenter {
         break;
       case UserAction.DELETE_COMMENT:
         this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.DELETING);
-        this._api.deleteComment(update).then(() => {
+        this._api.deleteComment(update.deleteCommentId).then(() => {
           this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.DELETED);
           this._cardsModel.deleteComment(updateType, update);
         })

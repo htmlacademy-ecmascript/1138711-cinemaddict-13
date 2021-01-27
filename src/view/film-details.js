@@ -1,14 +1,7 @@
 import Smart from "./smart.js";
 import dayjs from "dayjs";
 import he from "he";
-// import {generateId} from "../mock/cards.js";
-import {SpecialName} from "../utils.js";
-
-const getTimeFromMins = (mins) => {
-  const hours = Math.trunc(mins / 60);
-  const minutes = mins % 60;
-  return hours + `h ` + minutes + `m`;
-};
+import {SpecialName, getTimeFromMins} from "../utils.js";
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
@@ -42,7 +35,6 @@ const createCommentsTemplate = (comments, isDisabled, isDeleting) => {
 };
 
 const createEmotionsTemplate = (comments, currentEmoji) => {
-
   return comments.map((comment) => `<input class="film-details__emoji-item visually-hidden" name="emoji-${comment.emotion}"
   type="radio" id="emoji-${comment.emotion}" value="${comment.emotion}" ${currentEmoji === comment.emotion ? `checked` : ``} >
   <label class="film-details__emoji-label" for="emoji-${comment.emotion}">
@@ -51,7 +43,6 @@ const createEmotionsTemplate = (comments, currentEmoji) => {
 };
 
 const createFilmDetailsTemplate = (data) => {
-
   const {actors, ageRating, comments, country, description, director, duration, genres, original, poster, rating, date,
     writers, title, isAddToWatchList, isWatched, isFavorite, currentEmoji, isDisabled, isDeleting, isBlocked} = data;
 
@@ -172,7 +163,6 @@ export default class FilmDetails extends Smart {
 
     this._data.currentEmoji = `smile`;
     this._data.currentComment = ``;
-
     this._data.isDisabled = false;
     this._data.isDeleting = false;
     this._data.isBlocked = false;
@@ -183,7 +173,6 @@ export default class FilmDetails extends Smart {
     this._clickHandler = this._clickHandler.bind(this);
     this._deleteCommentClickHandler = this._deleteCommentClickHandler.bind(this);
     this._addCommentClickHandler = this._addCommentClickHandler.bind(this);
-
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._descriptionInputHandler = this._descriptionInputHandler.bind(this);
 
@@ -236,11 +225,6 @@ export default class FilmDetails extends Smart {
     }, true);
   }
 
-  setWatchListHandler(callback) {
-    this._callback.watchListClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchListClickHandler);
-  }
-
   _watchListClickHandler(evt) {
     evt.preventDefault();
     this.updateData({
@@ -249,9 +233,9 @@ export default class FilmDetails extends Smart {
     this._callback.watchListClick();
   }
 
-  setWatchedClickHandler(callback) {
-    this._callback.watchedClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
+  setWatchListHandler(callback) {
+    this._callback.watchListClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchListClickHandler);
   }
 
   _watchedClickHandler(evt) {
@@ -262,9 +246,9 @@ export default class FilmDetails extends Smart {
     this._callback.watchedClick();
   }
 
-  setFavoriteClickHandler(callback) {
-    this._callback.favoriteClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
   }
 
   _favoriteClickHandler(evt) {
@@ -275,14 +259,31 @@ export default class FilmDetails extends Smart {
     this._callback.favoriteClick();
   }
 
-  setClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
   _clickHandler(evt) {
     evt.preventDefault();
     this._callback.click();
+  }
+
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._clickHandler);
+  }
+
+  _deleteCommentClickHandler(evt) {
+    evt.preventDefault();
+    const commentId = evt.target.id;
+    const commentsCopy = this._data.comments.slice();
+    this.updateData({
+      comments: commentsCopy,
+    });
+    const currentComment = commentsCopy.findIndex((comment) => comment.id === commentId);
+    commentsCopy.splice(currentComment, 1);
+    this._callback.delete(commentsCopy, commentId);
   }
 
   setDeleteCommentHandler(callback) {
@@ -294,16 +295,21 @@ export default class FilmDetails extends Smart {
     });
   }
 
-  _deleteCommentClickHandler(evt) {
+  _addCommentClickHandler(evt) {
     evt.preventDefault();
-    const commentId = evt.target.id;
-    const commentsCopy = this._data.comments.slice();
-    const currentComment = commentsCopy.findIndex((comment) => comment.id === commentId);
-    commentsCopy.splice(currentComment, 1);
-    this._callback.delete(commentsCopy, commentId);
+    const commentValue = he.encode(evt.target.value);
+    const commentsCopies = this._data.comments.slice();
+    const newComment = {};
+    const commentEmotion = this._data.currentEmoji;
+    newComment.emotion = commentEmotion;
+    newComment.text = commentValue;
+    newComment.author = `Young Yougn`;
+    newComment.date = dayjs().format();
+    commentsCopies.push(newComment);
     this.updateData({
-      comments: commentsCopy,
+      comments: commentsCopies
     });
+    this._callback.add(commentsCopies);
   }
 
   setAddCommentHandler(callback) {
@@ -313,23 +319,5 @@ export default class FilmDetails extends Smart {
         this._addCommentClickHandler(evt);
       }
     });
-  }
-
-  _addCommentClickHandler(evt) {
-    evt.preventDefault();
-    const newComment = {};
-    const commentEmotion = this._data.currentEmoji;
-    const commentValue = he.encode(evt.target.value);
-    newComment.emotion = commentEmotion;
-    newComment.text = commentValue;
-    newComment.author = `Young Yougn`;
-    newComment.date = dayjs().format();
-    const commentsCopies = this._data.comments.slice();
-    commentsCopies.push(newComment);
-
-    this.updateData({
-      comments: commentsCopies
-    });
-    this._callback.add(commentsCopies);
   }
 }

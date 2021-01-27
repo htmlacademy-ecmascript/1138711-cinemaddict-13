@@ -7,7 +7,6 @@ export default class CardPresenter {
   constructor(cardContainer, changeData) {
     this._cardContainer = cardContainer;
     this._changeData = changeData;
-
     this._cardComponent = null;
 
     this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);

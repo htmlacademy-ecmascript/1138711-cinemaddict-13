@@ -162,3 +162,9 @@ export const sortCardRating = (cardA, cardB) => {
   return cardB.rating - cardA.rating;
 };
 
+export const getTimeFromMins = (mins) => {
+  const hours = Math.trunc(mins / 60);
+  const minutes = mins % 60;
+  return hours + `h ` + minutes + `m`;
+};
+

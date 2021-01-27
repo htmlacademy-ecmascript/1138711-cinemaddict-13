@@ -54,10 +54,9 @@ export default class Api {
       .then(Cards.adaptCommentToClient);
   }
 
-  deleteComment(card) {
-    const deleteComment = card.deleteCommentId;
+  deleteComment(commentId) {
     return this._load({
-      url: `comments/${deleteComment}`,
+      url: `comments/${commentId}`,
       method: Method.DELETE
     });
   }

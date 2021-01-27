@@ -49,6 +49,10 @@ moviePresenter.init();
 
 const siteFooter = document.querySelector(`.footer`);
 const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
+const renderPage = () => {
+  profilePresenter.init();
+  render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
+};
 
 api.getCards()
   .then((cards) => {
@@ -61,13 +65,11 @@ api.getCards()
   })
   .then((cards) => {
     cardsModel.setCards(UpdateType.INIT, cards);
-    profilePresenter.init();
-    render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
+    renderPage();
   })
   .catch(() => {
     cardsModel.setCards(UpdateType.INIT, []);
-    profilePresenter.init();
-    render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
+    renderPage();
   });
 
 

@@ -188,7 +188,7 @@ export const generateCard = () => {
     date: generateRealize(),
     duration,
     country: getRandomElement(countrys),
-    // genres: generateGenres(),
+    genres: generateGenres(),
     description: generateDescription(),
     comments,
     ageRating: getRandomElement(ages),

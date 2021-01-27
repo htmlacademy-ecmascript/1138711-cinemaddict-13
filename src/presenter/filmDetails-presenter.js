@@ -2,7 +2,6 @@ import FilmDetails from "../view/film-details.js";
 import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
 
 const body = document.querySelector(`body`);
-
 export const State = {
   BLOCKED: `BLOCKED`,
   UNBLOCKED: `UNBLOCKED`,
@@ -16,7 +15,6 @@ export default class FilmDetailsPresenter {
 
     this._filmDetailsContainer = filmDetailsContainer;
     this._changeData = changeData;
-
     this._filmDetailsComponent = null;
 
     this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
@@ -32,7 +30,6 @@ export default class FilmDetailsPresenter {
   init(card) {
 
     this._card = card;
-
     const prevfilmDetailsComponent = this._filmDetailsComponent;
 
     this._filmDetailsComponent = new FilmDetails(card);
@@ -163,11 +160,6 @@ export default class FilmDetailsPresenter {
   }
 
   setStateButton(state) {
-    // const deletingBtnId = this._card.deleteCommentId;
-    // const deleteBtn = document.getElementById(deletingBtnId);
-    // console.log(this._card);
-    // console.log(deleteBtn);
-
     const resetFormState = () => {
       this._filmDetailsComponent.updateData({
         isDisabled: false,

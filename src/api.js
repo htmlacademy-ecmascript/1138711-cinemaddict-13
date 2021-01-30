@@ -41,13 +41,11 @@ export default class Api {
       .then(Cards.adaptToClient);
   }
 
-  addComment(card) {
-    const comments = card.comments;
-    const lastComment = comments[comments.length - 1];
+  addComment(card, newComment) {
     return this._load({
       url: `comments/${card.id}`,
       method: Method.POST,
-      body: JSON.stringify(Cards.adaptCommentToServer(lastComment)),
+      body: JSON.stringify(newComment),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)

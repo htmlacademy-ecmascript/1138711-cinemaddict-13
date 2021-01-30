@@ -7,7 +7,7 @@ import ShowMoreBtn from "../view/show-more-btn.js";
 import FilmListRated from "../view/film-list-rated.js";
 import FilmListCommented from "../view/film-list-commented.js";
 import CardPresenter from "./card-presenter.js";
-import FilmDetailsPresenter, {State as FilmDetailsPresenterViewState} from "./filmDetails-presenter.js";
+import FilmDetailsPresenter from "./filmDetails-presenter.js";
 import {filter} from "../utils/filter.js";
 import {render, RenderPosition, remove, SortType, sortCardUp, sortCardRating, UserAction, UpdateType} from "../utils.js";
 
@@ -65,50 +65,6 @@ export default class MoviePresenter {
     this._filterModel.removeObserver(this._handleModelEvent);
   }
 
-  _getFiltredCards() {
-    const filterType = this._filterModel.getFilter();
-    const cards = this._cardsModel.getCards();
-    const filtredCards = filter[filterType](cards);
-
-    switch (this._currentSortType) {
-      case SortType.DATE:
-        return filtredCards.sort(sortCardUp);
-      case SortType.RATING:
-        return filtredCards.sort(sortCardRating);
-    }
-    return filtredCards;
-  }
-
-  _handleViewAction(actionType, updateType, update) {
-    switch (actionType) {
-      case UserAction.UPDATE_CARD:
-        this._api.updateCard(update).then((response) => {
-          this._cardsModel.updateCard(updateType, response);
-        });
-        break;
-      case UserAction.ADD_COMMENT:
-        this._filmDetailsPresenter.setStateForm(FilmDetailsPresenterViewState.BLOCKED);
-        this._api.addComment(update).then((response) => {
-          this._filmDetailsPresenter.setStateForm(FilmDetailsPresenterViewState.UNBLOCKED);
-          this._cardsModel.addComment(updateType, response);
-        })
-        .catch(() => {
-          this._filmDetailsPresenter.setStateForm(FilmDetailsPresenterViewState.ABORTING);
-        });
-        break;
-      case UserAction.DELETE_COMMENT:
-        this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.DELETING);
-        this._api.deleteComment(update.deleteCommentId).then(() => {
-          this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.DELETED);
-          this._cardsModel.deleteComment(updateType, update);
-        })
-        .catch(() => {
-          this._filmDetailsPresenter.setStateButton(FilmDetailsPresenterViewState.ABORTING);
-        });
-        break;
-    }
-  }
-
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
@@ -128,6 +84,30 @@ export default class MoviePresenter {
         this._renderMovies();
         break;
     }
+  }
+
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_CARD:
+        this._api.updateCard(update).then((response) => {
+          this._cardsModel.updateCard(updateType, response);
+        });
+        break;
+    }
+  }
+
+  _getFiltredCards() {
+    const filterType = this._filterModel.getFilter();
+    const cards = this._cardsModel.getCards();
+    const filtredCards = filter[filterType](cards);
+
+    switch (this._currentSortType) {
+      case SortType.DATE:
+        return filtredCards.sort(sortCardUp);
+      case SortType.RATING:
+        return filtredCards.sort(sortCardRating);
+    }
+    return filtredCards;
   }
 
   _handleSortTypeChange(sortType) {
@@ -193,7 +173,6 @@ export default class MoviePresenter {
     if (this._loadMoreButtonComponent !== null) {
       this._loadMoreButtonComponent = null;
     }
-
     this._loadMoreButtonComponent = new ShowMoreBtn();
 
     const filmsList = siteMainElement.querySelector(`.films-list`);
@@ -259,7 +238,7 @@ export default class MoviePresenter {
       }
 
       const siteFooter = document.querySelector(`.footer`);
-      const filmDetailsPresenter = new FilmDetailsPresenter(siteFooter, this._handleViewAction);
+      const filmDetailsPresenter = new FilmDetailsPresenter(siteFooter, this._cardsModel, this._handleViewAction, this._api);
       this._filmDetailsPresenter = filmDetailsPresenter;
       filmDetailsPresenter.init(currentCard);
       this._currentPopUp = currentCard;
@@ -286,15 +265,9 @@ export default class MoviePresenter {
     remove(this._noMovieCard);
     remove(this._loadMoreButtonComponent);
 
+    this._renderedCardCount = resetRenderedCardCount ? CARD_COUNT_PER_STEP : Math.min(cardCount, this._renderedCardCount);
     // eslint-disable-next-line no-unused-expressions
-    resetRenderedCardCount
-      ? this._renderedCardCount = CARD_COUNT_PER_STEP
-      : this._renderedCardCount = Math.min(cardCount, this._renderedCardCount);
-
-    // eslint-disable-next-line no-unused-expressions
-    resetSortType
-      ? this._currentSortType = SortType.DEFAULT
-      : ` `;
+    resetSortType ? SortType.DEFAULT : ` `;
   }
 
   _renderMovies() {

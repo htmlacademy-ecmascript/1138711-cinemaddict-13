@@ -5,7 +5,6 @@ export default class ProfilePresenter {
   constructor(profileContainer, cardsModel) {
     this._profileContainer = profileContainer;
     this._cardsModel = cardsModel;
-
     this._profileComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);

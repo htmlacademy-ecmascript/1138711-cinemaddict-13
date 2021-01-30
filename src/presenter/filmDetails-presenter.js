@@ -2,7 +2,7 @@ import FilmDetails from "../view/film-details.js";
 import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
 
 const body = document.querySelector(`body`);
-export const State = {
+const State = {
   BLOCKED: `BLOCKED`,
   UNBLOCKED: `UNBLOCKED`,
   DELETING: `DELETING`,
@@ -11,10 +11,12 @@ export const State = {
 };
 
 export default class FilmDetailsPresenter {
-  constructor(filmDetailsContainer, changeData) {
-
+  constructor(filmDetailsContainer, cardsModel, changeData, api) {
     this._filmDetailsContainer = filmDetailsContainer;
+    this._cardsModel = cardsModel;
     this._changeData = changeData;
+    this._api = api;
+
     this._filmDetailsComponent = null;
 
     this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
@@ -28,12 +30,11 @@ export default class FilmDetailsPresenter {
   }
 
   init(card) {
-
     this._card = card;
     const prevfilmDetailsComponent = this._filmDetailsComponent;
-
     this._filmDetailsComponent = new FilmDetails(card);
-    this._filmDetailsComponent.setWatchListHandler(this._handleAddToWatchListClick);
+
+    this._filmDetailsComponent.setWatchListClicHandler(this._handleAddToWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmDetailsComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
@@ -54,12 +55,13 @@ export default class FilmDetailsPresenter {
     remove(prevfilmDetailsComponent);
   }
 
-  updatePopUp(card) {
-    this._card = card;
-  }
-
   destroy() {
     remove(this._filmDetailsComponent);
+  }
+
+  updatePopUp(card) {
+    this._card = card;
+    this._filmDetailsComponent.updateData(card);
   }
 
   _closeFilmDetails() {
@@ -110,35 +112,65 @@ export default class FilmDetailsPresenter {
     );
   }
 
-  _handleAddCommentClick(commentsCopies) {
-    const card = Object.assign(this._card,
-        {
-          comments: commentsCopies
-        });
-    this._changeData(
-        UserAction.ADD_COMMENT,
-        UpdateType.MINOR,
-        card
-    );
+  _handleDeleteCommentClick(commentId) {
+    const cardId = this._card.id;
+    this.setStateBtn(commentId);
+    this._api.deleteComment(commentId).then(() => {
+      this.setStateBtn(commentId, State.DELETED);
+      this._cardsModel.deleteComment(UpdateType.MINOR, commentId, cardId);
+    })
+    .catch(() => {
+      this.setStateBtn(commentId, State.ABORTING);
+    });
   }
 
-  _handleDeleteCommentClick(commentsCopies, commentId) {
-    const card = Object.assign(this._card,
-        {
-          comments: commentsCopies,
-          deleteCommentId: commentId
+  setStateBtn(commentId, state) {
+    const deleteBtn = document.getElementById(commentId);
+    deleteBtn.innerHTML = `Deleting...`;
+    deleteBtn.disabled = true;
+
+    const resetFormState = () => {
+      this._filmDetailsComponent.updateData({
+        isDisabled: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.DELETED:
+        this._filmDetailsComponent.updateData({
+          isDisabled: false,
+          isDeleting: false
         });
-    this._changeData(
-        UserAction.DELETE_COMMENT,
-        UpdateType.MINOR,
-        card
-    );
+        break;
+      case State.ABORTING:
+        this._filmDetailsComponent.shake(resetFormState);
+        break;
+    }
+  }
+
+  _handleAddCommentClick(commentValue, commentEmotion, commentDate) {
+    const newComment = {};
+    newComment.comment = commentValue;
+    newComment.emotion = commentEmotion;
+    newComment.date = commentDate;
+    const cardId = this._card.id;
+    this.setStateForm(State.DELETING);
+    this._api.addComment(this._card, newComment).then((response) => {
+      this.setStateForm(State.DELETING);
+      this._cardsModel.addComment(UpdateType.MINOR, response, cardId);
+    })
+    .catch(() => {
+      this.setStateForm(State.ABORTING);
+    });
   }
 
   setStateForm(state) {
     const resetFormState = () => {
       this._filmDetailsComponent.updateData({
-        isBlocked: false,
+        isDisabled: false,
+        isDeleting: false,
+        isBlocked: false
       });
     };
 
@@ -151,33 +183,6 @@ export default class FilmDetailsPresenter {
       case State.UNBLOCKED:
         this._filmDetailsComponent.updateData({
           isBlocked: false
-        });
-        break;
-      case State.ABORTING:
-        this._filmDetailsComponent.shake(resetFormState);
-        break;
-    }
-  }
-
-  setStateButton(state) {
-    const resetFormState = () => {
-      this._filmDetailsComponent.updateData({
-        isDisabled: false,
-        isDeleting: false
-      });
-    };
-
-    switch (state) {
-      case State.DELETING:
-        this._filmDetailsComponent.updateData({
-          isDisabled: true,
-          isDeleting: true
-        });
-        break;
-      case State.DELETED:
-        this._filmDetailsComponent.updateData({
-          isDisabled: false,
-          isDeleting: false
         });
         break;
       case State.ABORTING:

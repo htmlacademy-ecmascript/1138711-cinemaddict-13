@@ -34,29 +34,34 @@ export default class Cards extends Observer {
     this._notify(updateType, update);
   }
 
-  addComment(updateType, update) {
-
-    // const index = this._cards.findIndex((card) => card.id === update.id);
-
-    // this._cards[index].comments = [
-    //   ...this._cards[index].comments
-    // ];
-
-    this._notify(updateType, update);
-  }
-
-  deleteComment(updateType, update) {
-
-    const index = this._cards.findIndex((card) => card.id === update.id);
+  addComment(updateType, response, cardId) {
+    const index = this._cards.findIndex((card) => card.id === cardId);
 
     if (index === -1) {
       throw new Error(`Can't delete unexisting card`);
     }
 
-    // this._cards[index].comments = [
-    //   ...this._cards[index].comments.slice(0, index),
-    //   ...this._cards[index].comments.slice(index + 1)
-    // ];
+    const currentComments = response.comments;
+    this._cards[index].comments = [
+      ...currentComments
+    ];
+
+    this._notify(updateType);
+  }
+
+  deleteComment(updateType, commentId, cardId) {
+    const index = this._cards.findIndex((card) => card.id === cardId);
+
+    if (index === -1) {
+      throw new Error(`Can't delete unexisting card`);
+    }
+
+    const commentIndex = this._cards[index].comments.findIndex((comment) => comment.id === commentId);
+
+    this._cards[index].comments = [
+      ...this._cards[index].comments.slice(0, commentIndex),
+      ...this._cards[index].comments.slice(commentIndex + 1)
+    ];
 
     this._notify(updateType);
   }
@@ -158,29 +163,11 @@ export default class Cards extends Observer {
         {
           id: comment.id,
           author: comment.author,
-          text: comment.comment,
+          comment: comment.comment,
           date: comment.date,
           emotion: comment.emotion
         }
     );
-    delete adaptedComment.comment;
-
-    return adaptedComment;
-  }
-
-  static adaptCommentToServer(comment) {
-    const adaptedComment = Object.assign(
-        {},
-        comment,
-        {
-          "comment": comment.text,
-          "date": comment.date,
-          "emotion": comment.emotion
-        }
-    );
-    delete adaptedComment.id;
-    delete adaptedComment.author;
-    delete adaptedComment.text;
 
     return adaptedComment;
   }

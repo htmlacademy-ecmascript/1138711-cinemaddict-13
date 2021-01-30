@@ -1,21 +1,6 @@
 import AbstractView from "./view/abstract.js";
 import dayjs from "dayjs";
 
-export const SpecialName = {
-  SYMBOLS_COUNT: 139,
-  ONE: 1,
-  TEN: 10,
-  ELEVEN: 11,
-  TWENTY: 20,
-  TWENTY_ONE: 21
-};
-
-export const Rank = {
-  NOVICE: `novice`,
-  FAN: `fan`,
-  MOVIE_BUFF: `movie buff`
-};
-
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
@@ -166,5 +151,33 @@ export const getTimeFromMins = (mins) => {
   const hours = Math.trunc(mins / 60);
   const minutes = mins % 60;
   return hours + `h ` + minutes + `m`;
+};
+
+export const Rank = {
+  NOVICE: `novice`,
+  FAN: `fan`,
+  MOVIE_BUFF: `movie buff`
+};
+
+export const SpecialName = {
+  SYMBOLS_COUNT: 139,
+  ONE: 1,
+  TEN: 10,
+  ELEVEN: 11,
+  TWENTY: 20,
+  TWENTY_ONE: 21
+};
+
+export const getRankOfUser = (cards) => {
+  const cardsLength = cards.filter((card) => card.isWatched).length;
+  let rank = ``;
+  if (cardsLength >= SpecialName.ONE && cardsLength <= SpecialName.TEN) {
+    rank = Rank.NOVICE;
+  } else if (cardsLength >= SpecialName.ELEVEN && cardsLength <= SpecialName.TWENTY) {
+    rank = Rank.FAN;
+  } else if (cardsLength >= SpecialName.TWENTY_ONE) {
+    rank = Rank.MOVIE_BUFF;
+  }
+  return rank;
 };
 

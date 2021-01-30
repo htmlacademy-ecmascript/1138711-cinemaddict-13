@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import Smart from "./smart";
 import Chart from "chart.js";
+import {getRankOfUser} from "../utils.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   getClearHoursFromMins,
@@ -98,6 +99,8 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
 const createStatisticsTemplate = (data) => {
   const {cards, dateFrom, dateTo, currentPeriod} = data;
 
+  const userRank = getRankOfUser(cards);
+
   let filtredCards;
   if (dateFrom === null) {
     filtredCards = cards.filter((card) => getCardsIsWatched(card));
@@ -122,7 +125,7 @@ const createStatisticsTemplate = (data) => {
   <p class="statistic__rank">
     Your rank
     <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-    <span class="statistic__rank-label">Sci-Fighter</span>
+    <span class="statistic__rank-label">${userRank}</span>
   </p>
 
   <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -176,6 +179,7 @@ export default class Statistics extends Smart {
       dateTo: dayjs().toDate(),
       currentPeriod: ``
     };
+
 
     this._diagrams = null;
 

@@ -1,5 +1,5 @@
 import FilmDetails from "../view/film-details.js";
-import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
+import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils/common.js";
 
 const body = document.querySelector(`body`);
 const State = {

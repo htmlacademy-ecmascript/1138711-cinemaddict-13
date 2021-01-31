@@ -1,4 +1,4 @@
-import {getRankOfUser} from "../utils.js";
+import {getRankOfUser} from "../utils/common.js";
 import AbstractView from "./abstract.js";
 
 const createProfileContentTemplate = (userRank) => {

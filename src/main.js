@@ -1,11 +1,11 @@
 import Statistics from "./view/statistics.js";
 import FooterStatistics from "./view/footer-statistics.js";
-import {MenuItem, render, RenderPosition, remove, UpdateType, FilterType} from "./utils.js";
 import ProfilePresenter from "./presenter/profile-presenter.js";
 import MoviePresenter from "./presenter/movies-presenter.js";
 import FilterPresenter from "./presenter/filter-presenter.js";
 import CardsModel from "./model/cards.js";
 import FilterModel from "./model/filter.js";
+import {MenuItem, render, RenderPosition, remove, UpdateType, FilterType} from "./utils/common.js";
 import Api from "./api.js";
 
 const AUTHORIZATION = `Basic hS11d3dfS11l1sa2f`;

@@ -1,16 +1,22 @@
-import AbstractView from "./view/abstract.js";
+import Abstract from "../view/abstract.js";
 import dayjs from "dayjs";
 
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  AFTEREND: `afterend`
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+  FAVORITES: `favorites`
 };
 
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`
+};
+
+export const MenuItem = {
+  CARDS: `CARDS`,
+  STATISTICS: `STATISTICS`
 };
 
 export const UserAction = {
@@ -26,24 +32,33 @@ export const UpdateType = {
   INIT: `INIT`
 };
 
-export const FilterType = {
-  ALL: `all`,
-  WATCHLIST: `watchlist`,
-  WATCHED: `watched`,
-  FAVORITES: `favorites`
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`
 };
 
-export const MenuItem = {
-  CARDS: `CARDS`,
-  STATISTICS: `STATISTICS`
+export const Rank = {
+  NOVICE: `novice`,
+  FAN: `fan`,
+  MOVIE_BUFF: `movie buff`
+};
+
+export const SpecialName = {
+  SYMBOLS_COUNT: 139,
+  ONE: 1,
+  TEN: 10,
+  ELEVEN: 11,
+  TWENTY: 20,
+  TWENTY_ONE: 21
 };
 
 export const render = (container, child, place) => {
-  if (container instanceof AbstractView) {
+  if (container instanceof Abstract) {
     container = container.getElement();
   }
 
-  if (child instanceof AbstractView) {
+  if (child instanceof Abstract) {
     child = child.getElement();
   }
 
@@ -58,11 +73,11 @@ export const render = (container, child, place) => {
 };
 
 export const replace = (newChild, oldChild) => {
-  if (oldChild instanceof AbstractView) {
+  if (oldChild instanceof Abstract) {
     oldChild = oldChild.getElement();
   }
 
-  if (newChild instanceof AbstractView) {
+  if (newChild instanceof Abstract) {
     newChild = newChild.getElement();
   }
 
@@ -71,7 +86,6 @@ export const replace = (newChild, oldChild) => {
   if (parent === null || newChild === null) {
     throw new Error(`Can't replace unexisting elements`);
   }
-
   parent.replaceChild(newChild, oldChild);
 };
 
@@ -80,41 +94,12 @@ export const remove = (component) => {
     return;
   }
 
-  if (!(component instanceof AbstractView)) {
+  if (!(component instanceof Abstract)) {
     throw new Error(`Can remove only components`);
   }
 
   component.getElement().remove();
   component.removeElement();
-};
-
-export const renderTemplate = (container, template, place) => {
-  if (container instanceof AbstractView) {
-    container = container.getElement();
-  }
-
-  container.insertAdjacentHTML(place, template);
-};
-
-export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstElementChild;
-};
-
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
 };
 
 const getWeightForNullDate = (dateA, dateB) => {
@@ -153,21 +138,6 @@ export const getTimeFromMins = (mins) => {
   return hours + `h ` + minutes + `m`;
 };
 
-export const Rank = {
-  NOVICE: `novice`,
-  FAN: `fan`,
-  MOVIE_BUFF: `movie buff`
-};
-
-export const SpecialName = {
-  SYMBOLS_COUNT: 139,
-  ONE: 1,
-  TEN: 10,
-  ELEVEN: 11,
-  TWENTY: 20,
-  TWENTY_ONE: 21
-};
-
 export const getRankOfUser = (cards) => {
   const cardsLength = cards.filter((card) => card.isWatched).length;
   let rank = ``;
@@ -179,5 +149,34 @@ export const getRankOfUser = (cards) => {
     rank = Rank.MOVIE_BUFF;
   }
   return rank;
+};
+
+export const renderTemplate = (container, template, place) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  container.insertAdjacentHTML(place, template);
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstElementChild;
+};
+
+export const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1)
+  ];
 };
 

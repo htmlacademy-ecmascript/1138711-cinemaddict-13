@@ -1,11 +1,6 @@
 import AbstractView from "./abstract.js";
 import dayjs from "dayjs";
-
-const getTimeFromMins = (mins) => {
-  const hours = Math.trunc(mins / 60);
-  const minutes = mins % 60;
-  return hours + `h ` + minutes + `m`;
-};
+import {getTimeFromMins} from "../utils/common.js";
 
 const createFilmCardTemplate = (card) => {
   const {id, title, rating, poster, genres, duration, description, date, comments, isFavorite, isWatched, isAddToWatchList} = card;
@@ -60,24 +55,24 @@ export default class FilmCard extends AbstractView {
     this._callback.watchListClick();
   }
 
+  setWatchListClicHandler(callback) {
+    this._callback.watchListClick = callback;
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._watchListClickHandler);
+  }
+
   _watchedClickHandler(evt) {
     evt.preventDefault();
     this._callback.watchedClick();
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
-  setWatchListHandler(callback) {
-    this._callback.watchListClick = callback;
-    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._watchListClickHandler);
-  }
-
   setWatchedClickHandler(callback) {
     this._callback.watchedClick = callback;
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._watchedClickHandler);
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 
   setFavoriteClickHandler(callback) {

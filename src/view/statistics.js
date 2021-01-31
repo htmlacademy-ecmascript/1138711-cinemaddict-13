@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import Smart from "./smart";
 import Chart from "chart.js";
-import {getRankOfUser} from "../utils.js";
+import {getRankOfUser} from "../utils/common";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   getClearHoursFromMins,
@@ -179,7 +179,6 @@ export default class Statistics extends Smart {
       dateTo: dayjs().toDate(),
       currentPeriod: ``
     };
-
 
     this._diagrams = null;
 

@@ -36,9 +36,8 @@ export const getCardsIsWatched = (card) => {
   return card.isWatched;
 };
 
-export const getCardsForPeriod = (card, dateA, dateB) => {
-  const period = dayjs(card.watching).format(`YYYY MMM DD`);
-  const dateOne = dayjs(dateA).format(`YYYY MMM DD`);
-  const dateTwo = dayjs(dateB).format(`YYYY MMM DD`);
-  return card.isWatched && period >= dateOne && period <= dateTwo;
+export const getCardsForPeriod = (card, dateFrom, dateTo) => {
+  return card.isWatched && dayjs(card.date).isSame(dateFrom)
+  || dayjs(card.date).isBetween(dateFrom, dateTo)
+  || dayjs(card.date).isSame(dateTo);
 };

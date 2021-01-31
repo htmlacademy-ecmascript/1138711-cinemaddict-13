@@ -1,4 +1,4 @@
-import {FilterType} from "../utils";
+import {FilterType} from "./common.js";
 
 export const filter = {
   [FilterType.ALL]: (cards) => cards.filter((card) => !card.all),

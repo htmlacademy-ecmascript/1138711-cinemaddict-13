@@ -1,5 +1,5 @@
 import ProfileContent from "../view/profile.js";
-import {render, RenderPosition, replace, remove} from "../utils.js";
+import {render, RenderPosition, replace, remove} from "../utils/common.js";
 
 export default class ProfilePresenter {
   constructor(profileContainer, cardsModel) {

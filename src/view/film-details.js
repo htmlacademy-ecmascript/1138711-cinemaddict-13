@@ -2,14 +2,12 @@ import Smart from "./smart.js";
 import dayjs from "dayjs";
 import he from "he";
 import {SpecialName, getTimeFromMins} from "../utils/common.js";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 const createGenresTemplate = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 };
-
-// eslint-disable-next-line no-undef
-const relativeTime = require(`dayjs/plugin/relativeTime`);
-dayjs.extend(relativeTime);
 
 const createCommentsTemplate = (comments, isDisabled, isDeleting) => {
   return comments.map((comment) => `<li class="film-details__comment">

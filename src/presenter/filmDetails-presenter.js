@@ -5,7 +5,6 @@ const body = document.querySelector(`body`);
 const State = {
   BLOCKED: `BLOCKED`,
   UNBLOCKED: `UNBLOCKED`,
-  DELETING: `DELETING`,
   DELETED: `DELETED`,
   ABORTING: `ABORTING`
 };
@@ -114,23 +113,35 @@ export default class FilmDetailsPresenter {
 
   _handleDeleteCommentClick(commentId) {
     const cardId = this._card.id;
-    this.setStateBtn(commentId);
     this._api.deleteComment(commentId).then(() => {
-      this.setStateBtn(commentId, State.DELETED);
+      this.setStateForm(State.DELETED);
       this._cardsModel.deleteComment(UpdateType.MINOR, commentId, cardId);
     })
     .catch(() => {
-      this.setStateBtn(commentId, State.ABORTING);
+      this.setStateForm(State.ABORTING);
     });
   }
 
-  setStateBtn(commentId, state) {
-    const deleteBtn = document.getElementById(commentId);
-    deleteBtn.innerHTML = `Deleting...`;
-    deleteBtn.disabled = true;
+  _handleAddCommentClick(commentValue, commentEmotion, commentDate) {
+    const newComment = {};
+    newComment.comment = commentValue;
+    newComment.emotion = commentEmotion;
+    newComment.date = commentDate;
+    const cardId = this._card.id;
+    this.setStateForm(State.BLOCKED);
+    this._api.addComment(this._card, newComment).then((response) => {
+      this.setStateForm(State.UNBLOCKED);
+      this._cardsModel.addComment(UpdateType.MINOR, response, cardId);
+    })
+    .catch(() => {
+      this.setStateForm(State.ABORTING);
+    });
+  }
 
+  setStateForm(state) {
     const resetFormState = () => {
       this._filmDetailsComponent.updateData({
+        isBlocked: false,
         isDisabled: false,
         isDeleting: false
       });
@@ -143,38 +154,6 @@ export default class FilmDetailsPresenter {
           isDeleting: false
         });
         break;
-      case State.ABORTING:
-        this._filmDetailsComponent.shake(resetFormState);
-        break;
-    }
-  }
-
-  _handleAddCommentClick(commentValue, commentEmotion, commentDate) {
-    const newComment = {};
-    newComment.comment = commentValue;
-    newComment.emotion = commentEmotion;
-    newComment.date = commentDate;
-    const cardId = this._card.id;
-    this.setStateForm(State.DELETING);
-    this._api.addComment(this._card, newComment).then((response) => {
-      this.setStateForm(State.DELETING);
-      this._cardsModel.addComment(UpdateType.MINOR, response, cardId);
-    })
-    .catch(() => {
-      this.setStateForm(State.ABORTING);
-    });
-  }
-
-  setStateForm(state) {
-    const resetFormState = () => {
-      this._filmDetailsComponent.updateData({
-        isDisabled: false,
-        isDeleting: false,
-        isBlocked: false
-      });
-    };
-
-    switch (state) {
       case State.BLOCKED:
         this._filmDetailsComponent.updateData({
           isBlocked: true

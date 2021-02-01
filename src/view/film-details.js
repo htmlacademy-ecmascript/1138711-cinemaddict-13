@@ -273,6 +273,9 @@ export default class FilmDetails extends Smart {
     evt.preventDefault();
     const commentId = evt.target.id;
     this._callback.delete(commentId);
+    const deleteBtn = document.getElementById(commentId);
+    deleteBtn.innerHTML = `Deleting...`;
+    deleteBtn.disabled = true;
   }
 
   setDeleteCommentHandler(callback) {
@@ -289,7 +292,9 @@ export default class FilmDetails extends Smart {
     const commentValue = he.encode(evt.target.value);
     const commentEmotion = this._data.currentEmoji;
     const commentDate = dayjs().format();
-    this._callback.add(commentValue, commentEmotion, commentDate);
+    if (commentValue && commentEmotion !== null) {
+      this._callback.add(commentValue, commentEmotion, commentDate);
+    }
   }
 
   setAddCommentHandler(callback) {

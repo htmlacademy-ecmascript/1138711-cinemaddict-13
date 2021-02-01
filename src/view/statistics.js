@@ -204,7 +204,7 @@ export default class Statistics extends Smart {
   }
 
   _setDateChange() {
-    let changePeriod = (DaysNumbers, Periods) => {
+    const changePeriod = (DaysNumbers, Periods) => {
       this.updateData({
         dateFrom: dayjs().subtract(DaysNumbers, `day`).toDate(),
         currentPeriod: Periods

@@ -27,7 +27,7 @@ const createFilmCardTemplate = (card) => {
   </p>
   <img src="${poster}" alt="" class="film-card__poster" id="${id}">
   <p class="film-card__description">${description}</p>
-  <a class="film-card__comments" id="${id}">${comments.length}</a>
+  <a class="film-card__comments" id="${id}">${comments.length} comments</a>
   <div class="film-card__controls">
     <button type="button" class="film-card__controls-item button ${addToWatListClassName}">Add to watchlist</button>
     <button type="button" class="film-card__controls-item button ${watchedClassName}" >Mark as watched</button>

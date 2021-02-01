@@ -256,8 +256,10 @@ export default class MoviePresenter {
     remove(this._loadMoreButtonComponent);
 
     this._renderedCardCount = resetRenderedCardCount ? CARD_COUNT_PER_STEP : Math.min(cardCount, this._renderedCardCount);
-    // eslint-disable-next-line no-unused-expressions
-    resetSortType ? this._currentSortType : ` `;
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
 
     remove(this._movieListRated);
     remove(this._movieListCommented);
@@ -296,7 +298,7 @@ export default class MoviePresenter {
     }
 
     const filtrCommentedCards = cards.filter((card) => card.comments.length > 0);
-    if (filtrRatedCards) {
+    if (filtrRatedCards.length > 0) {
       this._renderFilmListCommented(filtrCommentedCards);
     }
 

@@ -29,7 +29,7 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
   const uniqGenres = makeItemsUniq(mergedTotalGenres);
 
   const cardsGenresCounts = {};
-  for (let i in mergedTotalGenres) {
+  for (const i in mergedTotalGenres) {
     if (cardsGenresCounts[mergedTotalGenres[i]] !== undefined) {
       (cardsGenresCounts[mergedTotalGenres[i]]++);
     } else {

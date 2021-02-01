@@ -1,13 +1,10 @@
 import FilmCard from "../view/film-card.js";
-import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
-
-const siteMainElement = document.querySelector(`.main`);
+import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils/common.js";
 
 export default class CardPresenter {
   constructor(cardContainer, changeData) {
     this._cardContainer = cardContainer;
     this._changeData = changeData;
-
     this._cardComponent = null;
 
     this._handleAddToWatchListClick = this._handleAddToWatchListClick.bind(this);
@@ -22,13 +19,12 @@ export default class CardPresenter {
 
     this._cardComponent = new FilmCard(card);
 
-    this._cardComponent.setWatchListHandler(this._handleAddToWatchListClick);
+    this._cardComponent.setWatchListClicHandler(this._handleAddToWatchListClick);
     this._cardComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._cardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevCardComponent === null) {
-      const filmListContainer = siteMainElement.querySelector(`.films-list__container`);
-      render(filmListContainer, this._cardComponent, RenderPosition.BEFOREEND);
+      render(this._cardContainer, this._cardComponent, RenderPosition.BEFOREEND);
       return;
     }
 

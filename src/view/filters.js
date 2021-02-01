@@ -1,4 +1,4 @@
-import {MenuItem} from "../utils.js";
+import {MenuItem} from "../utils/common.js";
 import AbstractView from "./abstract.js";
 
 const createFilterItemTemplate = (filter, currentFilterType) => {
@@ -38,11 +38,6 @@ export default class Filters extends AbstractView {
     return createFilterTemplate(this._filters, this._currentFilter);
   }
 
-  setFilterTypeChangeHandler(callback) {
-    this._callback.filterTypeChange = callback;
-    this.getElement().addEventListener(`click`, this._filterTypeChangeHandler);
-  }
-
   _filterTypeChangeHandler(evt) {
     if (evt.target.classList.contains(`main-navigation__item`)) {
       evt.preventDefault();
@@ -50,9 +45,9 @@ export default class Filters extends AbstractView {
     }
   }
 
-  setMenuClickHandler(callback) {
-    this._callback.menuClick = callback;
-    this.getElement().addEventListener(`click`, this._menuClickHandler);
+  setFilterTypeChangeHandler(callback) {
+    this._callback.filterTypeChange = callback;
+    this.getElement().addEventListener(`click`, this._filterTypeChangeHandler);
   }
 
   _menuClickHandler(evt) {
@@ -69,6 +64,11 @@ export default class Filters extends AbstractView {
       const mainNavigationActiveItem = document.querySelector(`.main-navigation__item`);
       mainNavigationActiveItem.classList.add(`main-navigation__item--active`);
     }
+  }
+
+  setMenuClickHandler(callback) {
+    this._callback.menuClick = callback;
+    this.getElement().addEventListener(`click`, this._menuClickHandler);
   }
 }
 

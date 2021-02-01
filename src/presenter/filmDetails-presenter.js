@@ -1,13 +1,20 @@
 import FilmDetails from "../view/film-details.js";
-import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils.js";
+import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils/common.js";
 
 const body = document.querySelector(`body`);
+const State = {
+  BLOCKED: `BLOCKED`,
+  UNBLOCKED: `UNBLOCKED`,
+  DELETED: `DELETED`,
+  ABORTING: `ABORTING`
+};
 
 export default class FilmDetailsPresenter {
-  constructor(filmDetailsContainer, changeData) {
-
+  constructor(filmDetailsContainer, cardsModel, changeData, api) {
     this._filmDetailsContainer = filmDetailsContainer;
+    this._cardsModel = cardsModel;
     this._changeData = changeData;
+    this._api = api;
 
     this._filmDetailsComponent = null;
 
@@ -22,13 +29,11 @@ export default class FilmDetailsPresenter {
   }
 
   init(card) {
-
     this._card = card;
-
     const prevfilmDetailsComponent = this._filmDetailsComponent;
-
     this._filmDetailsComponent = new FilmDetails(card);
-    this._filmDetailsComponent.setWatchListHandler(this._handleAddToWatchListClick);
+
+    this._filmDetailsComponent.setWatchListClicHandler(this._handleAddToWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmDetailsComponent.setDeleteCommentHandler(this._handleDeleteCommentClick);
@@ -49,12 +54,13 @@ export default class FilmDetailsPresenter {
     remove(prevfilmDetailsComponent);
   }
 
-  updatePopUp(card) {
-    this._card = card;
-  }
-
   destroy() {
     remove(this._filmDetailsComponent);
+  }
+
+  updatePopUp(card) {
+    this._card = card;
+    this._filmDetailsComponent.updateData(card);
   }
 
   _closeFilmDetails() {
@@ -105,28 +111,62 @@ export default class FilmDetailsPresenter {
     );
   }
 
-  _handleDeleteCommentClick(commentsCopies) {
-    const card = Object.assign(this._card,
-        {
-          comments: commentsCopies
-        });
-    this._changeData(
-        UserAction.DELETE_COMMENT,
-        UpdateType.MINOR,
-        card
-    );
+  _handleDeleteCommentClick(commentId) {
+    const cardId = this._card.id;
+    this._api.deleteComment(commentId).then(() => {
+      this.setStateForm(State.DELETED);
+      this._cardsModel.deleteComment(UpdateType.MINOR, commentId, cardId);
+    })
+    .catch(() => {
+      this.setStateForm(State.ABORTING);
+    });
   }
 
-  _handleAddCommentClick(commentsCopies) {
-    const card = Object.assign(this._card,
-        {
-          comments: commentsCopies
-        });
-    this._changeData(
-        UserAction.DELETE_COMMENT,
-        UpdateType.MINOR,
-        card
-    );
+  _handleAddCommentClick(commentValue, commentEmotion, commentDate) {
+    const newComment = {};
+    newComment.comment = commentValue;
+    newComment.emotion = commentEmotion;
+    newComment.date = commentDate;
+    const cardId = this._card.id;
+    this.setStateForm(State.BLOCKED);
+    this._api.addComment(this._card, newComment).then((response) => {
+      this.setStateForm(State.UNBLOCKED);
+      this._cardsModel.addComment(UpdateType.MINOR, response, cardId);
+    })
+    .catch(() => {
+      this.setStateForm(State.ABORTING);
+    });
   }
 
+  setStateForm(state) {
+    const resetFormState = () => {
+      this._filmDetailsComponent.updateData({
+        isBlocked: false,
+        isDisabled: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.DELETED:
+        this._filmDetailsComponent.updateData({
+          isDisabled: false,
+          isDeleting: false
+        });
+        break;
+      case State.BLOCKED:
+        this._filmDetailsComponent.updateData({
+          isBlocked: true
+        });
+        break;
+      case State.UNBLOCKED:
+        this._filmDetailsComponent.updateData({
+          isBlocked: false
+        });
+        break;
+      case State.ABORTING:
+        this._filmDetailsComponent.shake(resetFormState);
+        break;
+    }
+  }
 }

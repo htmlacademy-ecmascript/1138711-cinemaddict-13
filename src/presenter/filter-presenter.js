@@ -1,7 +1,6 @@
 import FilterView from "../view/filters.js";
-import {render, RenderPosition, replace, remove, UpdateType, FilterType} from "../utils.js";
+import {render, RenderPosition, replace, remove, UpdateType, FilterType} from "../utils/common.js";
 import {filter} from "../utils/filter.js";
-
 
 export default class Filter {
   constructor(filterContainer, filterModel, cardsModel, handleSiteMenuClick) {

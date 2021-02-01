@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import Smart from "./smart";
 import Chart from "chart.js";
+import {getRankOfUser} from "../utils/common";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   getClearHoursFromMins,
@@ -98,6 +99,8 @@ const renderDiagram = (statisticCtx, cards, dateFrom, dateTo) => {
 const createStatisticsTemplate = (data) => {
   const {cards, dateFrom, dateTo, currentPeriod} = data;
 
+  const userRank = getRankOfUser(cards);
+
   let filtredCards;
   if (dateFrom === null) {
     filtredCards = cards.filter((card) => getCardsIsWatched(card));
@@ -122,7 +125,7 @@ const createStatisticsTemplate = (data) => {
   <p class="statistic__rank">
     Your rank
     <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-    <span class="statistic__rank-label">Sci-Fighter</span>
+    <span class="statistic__rank-label">${userRank}</span>
   </p>
 
   <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -201,6 +204,13 @@ export default class Statistics extends Smart {
   }
 
   _setDateChange() {
+    const changePeriod = (DaysNumbers, Periods) => {
+      this.updateData({
+        dateFrom: dayjs().subtract(DaysNumbers, `day`).toDate(),
+        currentPeriod: Periods
+      });
+    };
+
     this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, (evt) => {
       if (evt.target.tagName === `INPUT`) {
         const currentPeriod = evt.target.value;
@@ -210,25 +220,13 @@ export default class Statistics extends Smart {
             currentPeriod: Period.ALL_TIME
           });
         } else if (currentPeriod === Period.TODAY) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.TODAY, `day`).toDate(),
-            currentPeriod: Period.TODAY
-          });
+          changePeriod(DaysNumber.TODAY, Period.TODAY);
         } else if (currentPeriod === Period.WEEK) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.WEEK, `day`).toDate(),
-            currentPeriod: Period.WEEK
-          });
+          changePeriod(DaysNumber.WEEK, Period.WEEK);
         } else if (currentPeriod === Period.MONTH) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.MONTH, `day`).toDate(),
-            currentPeriod: Period.MONTH
-          });
+          changePeriod(DaysNumber.MONTH, Period.MONTH);
         } else if (currentPeriod === Period.YEAR) {
-          this.updateData({
-            dateFrom: dayjs().subtract(DaysNumber.YEAR, `day`).toDate(),
-            currentPeriod: Period.YEAR
-          });
+          changePeriod(DaysNumber.YEAR, Period.YEAR);
         }
       }
     });

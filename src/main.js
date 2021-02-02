@@ -1,5 +1,5 @@
-import Statistics from "./view/statistics.js";
-import FooterStatistics from "./view/footer-statistics.js";
+import StatisticsContent from "./view/statistics.js";
+import FooterStatisticsContent from "./view/footer-statistics.js";
 import ProfilePresenter from "./presenter/profile-presenter.js";
 import MoviePresenter from "./presenter/movies-presenter.js";
 import FilterPresenter from "./presenter/filter-presenter.js";
@@ -35,7 +35,7 @@ const handleSiteMenuClick = (menuItem) => {
       moviePresenter.destroy();
       remove(statisticsComponent);
       filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
-      statisticsComponent = new Statistics(cardsModel.getCards());
+      statisticsComponent = new StatisticsContent(cardsModel.getCards());
       render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
   }
@@ -51,7 +51,7 @@ const siteFooter = document.querySelector(`.footer`);
 const footerStatistics = siteFooter.querySelector(`.footer__statistics`);
 const renderPage = () => {
   profilePresenter.init();
-  render(footerStatistics, new FooterStatistics(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
+  render(footerStatistics, new FooterStatisticsContent(cardsModel.getCards()), RenderPosition.AFTERBEGIN);
 };
 
 api.getCards()
@@ -71,5 +71,3 @@ api.getCards()
     cardsModel.setCards(UpdateType.INIT, []);
     renderPage();
   });
-
-

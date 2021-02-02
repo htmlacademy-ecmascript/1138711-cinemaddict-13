@@ -185,12 +185,6 @@ export default class FilmDetails extends Smart {
     return createFilmDetailsTemplate(this._data);
   }
 
-  restoreHandlers() {
-    this._setInnerHandlers();
-    this.setDeleteCommentHandler(this._callback.delete);
-    this.setAddCommentHandler(this._callback.add);
-  }
-
   _setInnerHandlers() {
     this.getElement()
       .querySelector(`.film-details__emoji-list`)
@@ -210,6 +204,12 @@ export default class FilmDetails extends Smart {
     this.getElement()
       .querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setDeleteCommentHandler(this._callback.delete);
+    this.setAddCommentHandler(this._callback.add);
   }
 
   _emojiClickHandler(evt) {

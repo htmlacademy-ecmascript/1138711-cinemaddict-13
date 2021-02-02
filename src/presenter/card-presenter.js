@@ -1,4 +1,4 @@
-import FilmCard from "../view/film-card.js";
+import FilmCardContent from "../view/film-card.js";
 import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils/common.js";
 
 export default class CardPresenter {
@@ -17,7 +17,7 @@ export default class CardPresenter {
 
     const prevCardComponent = this._cardComponent;
 
-    this._cardComponent = new FilmCard(card);
+    this._cardComponent = new FilmCardContent(card);
 
     this._cardComponent.setWatchListClicHandler(this._handleAddToWatchListClick);
     this._cardComponent.setWatchedClickHandler(this._handleWatchedClick);

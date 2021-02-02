@@ -1,4 +1,4 @@
-import FilmDetails from "../view/film-details.js";
+import FilmDetailsContent from "../view/film-details.js";
 import {render, RenderPosition, replace, remove, UserAction, UpdateType} from "../utils/common.js";
 
 const body = document.querySelector(`body`);
@@ -31,7 +31,7 @@ export default class FilmDetailsPresenter {
   init(card) {
     this._card = card;
     const prevfilmDetailsComponent = this._filmDetailsComponent;
-    this._filmDetailsComponent = new FilmDetails(card);
+    this._filmDetailsComponent = new FilmDetailsContent(card);
 
     this._filmDetailsComponent.setWatchListClicHandler(this._handleAddToWatchListClick);
     this._filmDetailsComponent.setWatchedClickHandler(this._handleWatchedClick);
@@ -61,18 +61,6 @@ export default class FilmDetailsPresenter {
   updatePopUp(card) {
     this._card = card;
     this._filmDetailsComponent.updateData(card);
-  }
-
-  _closeFilmDetails() {
-    remove(this._filmDetailsComponent);
-    body.classList.remove(`hide-overflow`);
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
-  }
-
-  _onEscKeyDown(evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      this._closeFilmDetails();
-    }
   }
 
   _handleAddToWatchListClick() {
@@ -167,6 +155,18 @@ export default class FilmDetailsPresenter {
       case State.ABORTING:
         this._filmDetailsComponent.shake(resetFormState);
         break;
+    }
+  }
+
+  _closeFilmDetails() {
+    remove(this._filmDetailsComponent);
+    body.classList.remove(`hide-overflow`);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  _onEscKeyDown(evt) {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      this._closeFilmDetails();
     }
   }
 }

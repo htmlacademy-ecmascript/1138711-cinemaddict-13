@@ -26,12 +26,12 @@ export default class ProfilePresenter {
     remove(prevProfileComponent);
   }
 
-  _handleModelEvent() {
-    this.init();
-  }
-
   destroy() {
     remove(this._profileComponent);
     this._cardsModel.removeObserver(this._handleModelEvent);
+  }
+
+  _handleModelEvent() {
+    this.init();
   }
 }

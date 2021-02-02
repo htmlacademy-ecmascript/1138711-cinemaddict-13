@@ -5,8 +5,8 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
 
   return (
-    `<a  id="${type}" href="#favorites" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}">
-    ${name} ${name !== `All movies` ? `<span class="main-navigation__item-count">${count}</span>` : `` }
+    `<a  id="${type}" href="#favorites" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}" data-menu-item="${MenuItem.CARDS}">
+      ${name} ${name !== `All movies` ? `<span class="main-navigation__item-count">${count}</span>` : `` }
    </a>`
   );
 };
@@ -17,7 +17,7 @@ const createFilterTemplate = (filterItems, currentFilterType) => {
     .join(``);
 
   return `<nav class="main-navigation">
-  <div class="main-navigation__items" data-menu-item="${MenuItem.CARDS}">
+  <div class="main-navigation__items">
     ${filterItemsTemplate}
   </div>
   <a href="#stats" class="main-navigation__additional"  data-menu-item="${MenuItem.STATISTICS}" >Stats</a>
@@ -61,8 +61,6 @@ export default class Filters extends AbstractView {
       statistics.classList.add(`main-navigation__additional--active`);
     } else if (menuItem === MenuItem.CARDS) {
       statistics.classList.remove(`main-navigation__additional--active`);
-      const mainNavigationActiveItem = document.querySelector(`.main-navigation__item`);
-      mainNavigationActiveItem.classList.add(`main-navigation__item--active`);
     }
   }
 

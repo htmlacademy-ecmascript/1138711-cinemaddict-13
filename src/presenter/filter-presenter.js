@@ -1,4 +1,4 @@
-import FilterView from "../view/filters.js";
+import FilterContent from "../view/filters.js";
 import {render, RenderPosition, replace, remove, UpdateType, FilterType} from "../utils/common.js";
 import {filter} from "../utils/filter.js";
 
@@ -25,7 +25,7 @@ export default class Filter {
     const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new FilterView(filters, this._currentFilter);
+    this._filterComponent = new FilterContent(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
     this._filterComponent.setMenuClickHandler(this._handleSiteMenuClick);
 
@@ -57,7 +57,7 @@ export default class Filter {
       {
         type: FilterType.ALL,
         name: `All movies`,
-        count: ` `
+        count: filter[FilterType.ALL](cards).length
       },
       {
         type: FilterType.WATCHLIST,
@@ -76,5 +76,4 @@ export default class Filter {
       }
     ];
   }
-
 }

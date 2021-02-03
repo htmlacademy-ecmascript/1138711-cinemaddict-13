@@ -192,7 +192,7 @@ export default class MoviePresenter {
 
     const currentMostRaredCards = mostRatedCards.slice(0, 2);
 
-    for (let current of currentMostRaredCards) {
+    for (const current of currentMostRaredCards) {
       renderCardRated(current);
     }
   }
@@ -214,7 +214,7 @@ export default class MoviePresenter {
 
     const currentMostCommentedCards = mostCommentedCards.slice(0, 2);
 
-    for (let current of currentMostCommentedCards) {
+    for (const current of currentMostCommentedCards) {
       renderCardCommented(current);
     }
   }
